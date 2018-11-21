@@ -1,88 +1,150 @@
 package cn.edu.sjtu.travelguide;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.Button;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
-import com.baidu.mapapi.CoordType;
-import com.baidu.mapapi.SDKInitializer;
+import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.model.LatLng;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity implements SensorEventListener{
+
     private MapView mMapView = null;
+    private BaiduMap mBaiduMap;
+
+    LocationClient mLocClient;
+    public MyLocationListenner myListener = new MyLocationListenner();
+    private LocationMode mCurrentMode;
+    //BitmapDescriptor mCurrentMarker;
+//    private static final int accuracyCircleFillColor = 0xAAFFFF88;
+//    private static final int accuracyCircleStrokeColor = 0xAA00FF00;
+    private SensorManager mSensorManager;
+    private Double lastX = 0.0;
+    private int mCurrentDirection = 0;
+    private double mCurrentLat = 0.0;
+    private double mCuurentLon = 0.0;
+    private float mCurrentAccuracy;
+
+    private MyLocationData locData;
+    boolean isFirstLoc = true; // 是否首次定位
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SDKInitializer.initialize(getApplicationContext());
-        SDKInitializer.setCoordType(CoordType.BD09LL);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mCurrentMode = LocationMode.COMPASS;
+
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.bmapView);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        mBaiduMap = mMapView.getMap();
+        mBaiduMap.setMyLocationEnabled(true);
+        mLocClient = new LocationClient(this);
+        mLocClient.registerLocationListener(myListener);
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true);
+        option.setCoorType("bd09ll");
+        option.setScanSpan(1000);
+        mLocClient.setLocOption(option);
+        mLocClient.start();
+        mLocClient.requestLocation();
     }
 
     @Override
     protected void onDestroy() {
+        //退出时销毁定位
+        mLocClient.stop();
+        // 关闭定位图层
+        mBaiduMap.setMyLocationEnabled(false);
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         mMapView.onDestroy();
+        mMapView = null;
     }
-
     @Override
     protected void onResume() {
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
         mMapView.onResume();
+        //为系统的方向传感器注册监听器
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                SensorManager.SENSOR_DELAY_UI);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
         mMapView.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        //取消注册传感器监听
+        mSensorManager.unregisterListener(this);
+        super.onStop();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+//        double x = event.values[SensorManager.DATA_X];
+//        if(Math.abs(x-lastX) > 1.0){
+//            mCurrentDirection = (int) x;
+//            locData = new MyLocationData.Builder()
+//                    .accuracy(mCurrentAccuracy)
+//                    .direction(mCurrentDirection).latitude(mCurrentLat)
+//                    .longitude(mCuurentLon).build();
+//            mBaiduMap.setMyLocationData(locData);
+//        }
+//        lastX = x;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    public class MyLocationListenner implements BDLocationListener{
+
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            if(location == null || mMapView == null){
+                System.out.print("-----------got here");
+                return;
+            }
+            mCurrentLat = location.getLatitude();
+            mCuurentLon = location.getLongitude();
+            mCurrentAccuracy = location.getRadius();
+            locData = new MyLocationData.Builder()
+                    .accuracy(mCurrentAccuracy)
+                    .direction(mCurrentDirection).latitude(mCurrentLat)
+                    .longitude(mCuurentLon).build();
+            mBaiduMap.setMyLocationData(locData);
+            //System.out.print("latitude----:"+location.getLatitude() + "longitude----:"+location.getLongitude());
+            if (isFirstLoc) {
+                isFirstLoc = false;
+                LatLng ll = new LatLng(location.getLatitude(),
+                        location.getLongitude());
+                MapStatus.Builder builder = new MapStatus.Builder();
+                builder.target(ll).zoom(18.0f);
+                //System.out.print("latitude:"+ll.latitude + "longitude:"+ll.longitude);
+                mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
+            }
+        }
     }
 }
