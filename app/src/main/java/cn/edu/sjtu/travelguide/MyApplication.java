@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 
 /**
  * Created by wanglei on 2018/10/7.
