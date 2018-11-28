@@ -4,9 +4,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -19,6 +19,7 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +30,8 @@ import static android.content.Context.SENSOR_SERVICE;
 public class MapFragment extends BaseFragment implements SensorEventListener {
     @BindView(R.id.bmapView)
     MapView mMapView;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
     private BaiduMap mBaiduMap;
 
     LocationClient mLocClient;
@@ -49,13 +52,14 @@ public class MapFragment extends BaseFragment implements SensorEventListener {
 
     @Override
     protected View onCreateView() {
-        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
+        FrameLayout layout = (FrameLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
         ButterKnife.bind(this, layout);
+        mTopBar.setTitle("地图");
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mCurrentMode = LocationMode.COMPASS;
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setMyLocationEnabled(true);
-        mLocClient = new LocationClient(this.getContext());
+        mLocClient = new LocationClient(getContext());
         mLocClient.registerLocationListener(myListener);
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true);
@@ -75,8 +79,10 @@ public class MapFragment extends BaseFragment implements SensorEventListener {
         mBaiduMap.setMyLocationEnabled(false);
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mMapView.onDestroy();
-        mMapView = null;
+        if (mMapView != null) {
+            mMapView.onDestroy();
+            mMapView = null;
+        }
     }
 
     @Override
@@ -100,6 +106,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener {
     public void onStop() {
         //取消注册传感器监听
         mSensorManager.unregisterListener(this);
+        mLocClient.stop();
         super.onStop();
     }
 

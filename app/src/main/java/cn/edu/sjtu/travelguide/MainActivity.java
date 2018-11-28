@@ -8,6 +8,7 @@ import cn.edu.sjtu.travelguide.fragment.BaseFragment;
 import cn.edu.sjtu.travelguide.fragment.HomeFragment;
 
 public class MainActivity extends QMUIFragmentActivity {
+    private BaseFragment fragment;
 
     @Override
     protected int getContextViewId() {
@@ -17,7 +18,7 @@ public class MainActivity extends QMUIFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BaseFragment fragment = new HomeFragment();
+        fragment = new HomeFragment();
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -26,4 +27,6 @@ public class MainActivity extends QMUIFragmentActivity {
                 .commit();
 
     }
+
+
 }

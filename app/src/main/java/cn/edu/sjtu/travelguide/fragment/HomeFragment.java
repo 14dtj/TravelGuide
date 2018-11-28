@@ -25,6 +25,8 @@ public class HomeFragment extends BaseFragment {
     @BindView(R.id.pager)
     ViewPager mViewPager;
 
+    private List<Fragment> fragments;
+
     @Override
     protected View onCreateView() {
         FrameLayout layout = (FrameLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_home, null);
@@ -63,7 +65,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initPagers() {
-        List<Fragment> fragments = new ArrayList<>();
+        fragments = new ArrayList<>();
         Fragment mapFragment = new MapFragment();
         Fragment recommendFragment = new RecommendFragment();
         Fragment myFragment = new MyFragment();
