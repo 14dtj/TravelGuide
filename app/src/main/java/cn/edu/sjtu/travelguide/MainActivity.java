@@ -8,7 +8,8 @@ import cn.edu.sjtu.travelguide.fragment.BaseFragment;
 import cn.edu.sjtu.travelguide.fragment.HomeFragment;
 
 public class MainActivity extends QMUIFragmentActivity {
-    private BaseFragment fragment;
+    private BaseFragment currentFragment;
+    private HomeFragment homeFragment;
 
     @Override
     protected int getContextViewId() {
@@ -18,15 +19,20 @@ public class MainActivity extends QMUIFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragment = new HomeFragment();
+        homeFragment = new HomeFragment();
+        currentFragment = homeFragment;
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(getContextViewId(), fragment, fragment.getClass().getSimpleName())
-                .addToBackStack(fragment.getClass().getSimpleName())
+                .add(getContextViewId(), currentFragment, currentFragment.getClass().getSimpleName())
+                .addToBackStack(currentFragment.getClass().getSimpleName())
                 .commit();
-
     }
 
 
+
+
+    public HomeFragment getHomeFragment() {
+        return homeFragment;
+    }
 }

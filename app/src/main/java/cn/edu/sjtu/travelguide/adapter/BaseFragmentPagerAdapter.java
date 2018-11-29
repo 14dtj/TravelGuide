@@ -8,15 +8,18 @@ import java.util.List;
 
 public class BaseFragmentPagerAdapter extends FragmentPagerAdapter {
     private List<Fragment> mDataList;
+    private FragmentManager fragmentManager;
 
     public BaseFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
+        this.fragmentManager = fm;
     }
 
 
     public BaseFragmentPagerAdapter(FragmentManager fm, List<Fragment> dataList) {
         super(fm);
         mDataList = dataList;
+        this.fragmentManager = fm;
     }
 
     @Override
