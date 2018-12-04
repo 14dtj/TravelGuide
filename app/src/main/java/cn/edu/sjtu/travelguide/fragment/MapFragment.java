@@ -8,17 +8,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
@@ -40,9 +33,6 @@ import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
-import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
-import com.baidu.mapapi.search.sug.SuggestionResult;
-import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 
 import butterknife.BindView;
@@ -58,6 +48,8 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
 
     @BindView(R.id.bmapView)
     MapView mMapView;
+    @BindView(R.id.topbar)
+    QMUITopBarLayout mTopBar;
     private BaiduMap mBaiduMap;
     GeoCoder mSearch = null; // 搜索模块，也可去掉地图模块独立使用
 
@@ -131,7 +123,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         mSearch.setOnGetGeoCodeResultListener(this);
 
         mBaiduMap.setMyLocationEnabled(true);
-        mLocClient = new LocationClient(this.getContext());
+        mLocClient = new LocationClient(getContext());
         mLocClient.registerLocationListener(myListener);
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true);
@@ -167,7 +159,6 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         mMapView.onDestroy();
         mMapView = null;
         super.onDestroy();
-
     }
 
     @Override
@@ -191,6 +182,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     public void onStop() {
         //取消注册传感器监听
         mSensorManager.unregisterListener(this);
+        mLocClient.stop();
         super.onStop();
     }
 

@@ -15,9 +15,14 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.edu.sjtu.travelguide.MainActivity;
+import cn.edu.sjtu.travelguide.MyApplication;
 import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.adapter.BaseFragmentPagerAdapter;
 
+/**
+ * 管理其他fragment的主界面
+ */
 public class HomeFragment extends BaseFragment {
 
     @BindView(R.id.tabs)
@@ -25,10 +30,20 @@ public class HomeFragment extends BaseFragment {
     @BindView(R.id.pager)
     ViewPager mViewPager;
 
+
+    private MapFragment mapFragment = new MapFragment();
+    private LoginFragment loginFragment = new LoginFragment();
+    private MyFragment myFragment = new MyFragment();
+    private RecommendFragment recommendFragment = new RecommendFragment();
+    private RegisterFragment registerFragment = new RegisterFragment();
+
+    private MainActivity context;
+
     @Override
     protected View onCreateView() {
         FrameLayout layout = (FrameLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_home, null);
         ButterKnife.bind(this, layout);
+        context = (MainActivity) getActivity();
         initTabs();
         initPagers();
         return layout;
@@ -64,19 +79,26 @@ public class HomeFragment extends BaseFragment {
 
     private void initPagers() {
         List<Fragment> fragments = new ArrayList<>();
-        Fragment mapFragment = new MapFragment();
-        Fragment recommendFragment = new RecommendFragment();
-        Fragment myFragment = new MyFragment();
         fragments.add(mapFragment);
         fragments.add(recommendFragment);
-        fragments.add(myFragment);
-        BaseFragmentPagerAdapter adapter = new BaseFragmentPagerAdapter(getActivity().getSupportFragmentManager(), fragments);
+        //如果登录了直接进入
+        if (MyApplication.getUser() == null) {
+            fragments.add(loginFragment);
+        } else {
+            fragments.add(myFragment);
+        }
+        BaseFragmentPagerAdapter adapter = new BaseFragmentPagerAdapter(context.getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(adapter);
+        mViewPager.setOffscreenPageLimit(3);
         mTabSegment.setupWithViewPager(mViewPager, false);
     }
+
+
 
     @Override
     protected boolean canDragBack() {
         return false;
     }
+
+
 }

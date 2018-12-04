@@ -1,23 +1,21 @@
 package cn.edu.sjtu.travelguide.fragment;
 
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.qmuiteam.qmui.widget.QMUITopBarLayout;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.sjtu.travelguide.R;
 
-public class RecommendFragment extends BaseFragment {
-    @BindView(R.id.topbar)
-    QMUITopBarLayout mTopBar;
+public class RegisterFragment extends Fragment {
     @Override
-    protected View onCreateView() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         FrameLayout layout = (FrameLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_about, null);
         ButterKnife.bind(this, layout);
-        mTopBar.setTitle("推荐");
         return layout;
     }
 }
