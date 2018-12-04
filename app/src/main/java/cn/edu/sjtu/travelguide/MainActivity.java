@@ -1,6 +1,7 @@
 package cn.edu.sjtu.travelguide;
 
 import android.os.Bundle;
+import android.view.Window;
 
 import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 
@@ -16,7 +17,10 @@ public class MainActivity extends QMUIFragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
         BaseFragment fragment = new HomeFragment();
 
         getSupportFragmentManager()
@@ -25,5 +29,16 @@ public class MainActivity extends QMUIFragmentActivity {
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();
 
+        if(savedInstanceState!= null)
+        {
+            String FRAGMENTS_TAG = "Android:support:fragments";
+            savedInstanceState.remove(FRAGMENTS_TAG);
+
+        }
     }
+
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState){
+//        //super.onSaveInstanceState(outState);
+//    }
 }
