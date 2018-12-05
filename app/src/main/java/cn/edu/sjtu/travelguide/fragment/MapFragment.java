@@ -48,8 +48,6 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
 
     @BindView(R.id.bmapView)
     MapView mMapView;
-    @BindView(R.id.topbar)
-    QMUITopBarLayout mTopBar;
     private BaiduMap mBaiduMap;
     GeoCoder mSearch = null; // 搜索模块，也可去掉地图模块独立使用
 
