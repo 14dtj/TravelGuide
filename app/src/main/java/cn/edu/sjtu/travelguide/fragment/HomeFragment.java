@@ -32,12 +32,12 @@ public class HomeFragment extends BaseFragment {
 
 
     private MapFragment mapFragment = new MapFragment();
-    private LoginFragment loginFragment = new LoginFragment();
     private MyFragment myFragment = new MyFragment();
     private RecommendFragment recommendFragment = new RecommendFragment();
-    private RegisterFragment registerFragment = new RegisterFragment();
+    List<Fragment> fragments = new ArrayList<>();
 
     private MainActivity context;
+    private BaseFragmentPagerAdapter adapter;
 
     @Override
     protected View onCreateView() {
@@ -78,22 +78,14 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initPagers() {
-        List<Fragment> fragments = new ArrayList<>();
         fragments.add(mapFragment);
         fragments.add(recommendFragment);
-        //如果登录了直接进入
-        if (MyApplication.getUser() == null) {
-            fragments.add(loginFragment);
-        } else {
-            fragments.add(myFragment);
-        }
-        BaseFragmentPagerAdapter adapter = new BaseFragmentPagerAdapter(context.getSupportFragmentManager(), fragments);
+        fragments.add(myFragment);
+        adapter = new BaseFragmentPagerAdapter(context.getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(3);
         mTabSegment.setupWithViewPager(mViewPager, false);
     }
-
-
 
     @Override
     protected boolean canDragBack() {

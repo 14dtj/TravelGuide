@@ -44,7 +44,6 @@ public class LoginFragment extends BaseFragment implements AsyncTask {
     private RMPService rmpService;
     private LoginFragment loginFragment;
     private MainActivity context;
-    private HomeFragment homeFragment;
 
     private String usernameStr;
     private String passwordStr;
@@ -54,7 +53,6 @@ public class LoginFragment extends BaseFragment implements AsyncTask {
     protected View onCreateView() {
         rmpService = RMPService.getInstance();
         context = (MainActivity) getActivity();
-        homeFragment = context.getHomeFragment();
         FrameLayout layout = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.fragment_login, null);
         ButterKnife.bind(this, layout);
         loginFragment = this;
@@ -74,12 +72,8 @@ public class LoginFragment extends BaseFragment implements AsyncTask {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction trans = getFragmentManager().beginTransaction();
                 RegisterFragment registerFragment = new RegisterFragment();
-                trans.remove(loginFragment).show(registerFragment);
-                trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                trans.addToBackStack(null);
-                trans.commit();
+                startFragment(registerFragment);
             }
         });
         return layout;
@@ -100,7 +94,7 @@ public class LoginFragment extends BaseFragment implements AsyncTask {
                             .putString("password", passwordStr)
                             .apply();
                 }
-                // context.switchFragment(homeFragment.getMyFragment());
+                startFragment(new HomeFragment());
             }
         });
     }

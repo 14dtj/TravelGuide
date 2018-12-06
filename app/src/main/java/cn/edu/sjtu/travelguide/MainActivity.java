@@ -7,10 +7,10 @@ import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 
 import cn.edu.sjtu.travelguide.fragment.BaseFragment;
 import cn.edu.sjtu.travelguide.fragment.HomeFragment;
+import cn.edu.sjtu.travelguide.fragment.LoginFragment;
 
 public class MainActivity extends QMUIFragmentActivity {
     private BaseFragment currentFragment;
-    private HomeFragment homeFragment;
 
     @Override
     protected int getContextViewId() {
@@ -23,29 +23,21 @@ public class MainActivity extends QMUIFragmentActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
-        homeFragment = new HomeFragment();
-        currentFragment = homeFragment;
-
+        if (MyApplication.getUser() == null) {
+            currentFragment = new HomeFragment();
+        } else {
+            currentFragment = new LoginFragment();
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(getContextViewId(), currentFragment, currentFragment.getClass().getSimpleName())
                 .addToBackStack(currentFragment.getClass().getSimpleName())
                 .commit();
 
-        if(savedInstanceState!= null)
-        {
+        if (savedInstanceState != null) {
             String FRAGMENTS_TAG = "Android:support:fragments";
             savedInstanceState.remove(FRAGMENTS_TAG);
 
         }
     }
-
-    public HomeFragment getHomeFragment() {
-        return homeFragment;
-    }
-
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState){
-//        //super.onSaveInstanceState(outState);
-//    }
 }
