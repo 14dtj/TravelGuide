@@ -23,11 +23,11 @@ public class MainActivity extends QMUIFragmentActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
-        if (MyApplication.getUser() == null) {
-            currentFragment = new HomeFragment();
-        } else {
+       // if (MyApplication.getUser() == null) {
+     //       currentFragment = new HomeFragment();
+     //   } else {
             currentFragment = new LoginFragment();
-        }
+     //   }
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(getContextViewId(), currentFragment, currentFragment.getClass().getSimpleName())

@@ -10,11 +10,13 @@ import java.util.List;
 import cn.edu.sjtu.travelguide.MyApplication;
 import cn.edu.sjtu.travelguide.entity.User;
 import cn.edu.sjtu.travelguide.entity.UserList;
-import cn.edu.sjtu.travelguide.fragment.LoginFragment;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -75,7 +77,7 @@ public class RMPService {
      * @param password
      * @param task
      */
-    public void onLoginResponse(String jsonStr, String password, AsyncTask task) {
+    private void onLoginResponse(String jsonStr, String password, AsyncTask task) {
         Gson gson = new Gson();
         UserList response = gson.fromJson(jsonStr, UserList.class);
         if (response != null) {
@@ -89,4 +91,42 @@ public class RMPService {
             }
         }
     }
+
+    /**
+     * 用户登录
+     *
+     * @param user
+     * @return
+     */
+    public void register(User user, final AsyncTask task) {
+        String url = BASE_URL + "User/";
+        MediaType mediaType = MediaType.parse("application/json");
+        Gson gson = new Gson();
+        String data = gson.toJson(user);
+        RequestBody body = RequestBody.create(mediaType, data);
+        Request request = new Request.Builder().url(url)
+                .post(body).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, e.getMessage());
+                task.onFailure();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ResponseBody body = response.body();
+                if (body == null) {
+                    task.onFailure();
+                } else {
+                    String jsonStr = body.string();
+                    Log.d(TAG, jsonStr);
+                    task.onSuccess();
+                }
+            }
+        });
+    }
+
+
 }

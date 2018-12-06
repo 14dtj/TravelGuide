@@ -6,4 +6,6 @@
     <string name="pwd"> 密码</string>
     <string name="username"> 用户名</string>
     <string name="register">注册</string>
+    <string name="logistics">物流企业</string>
+    <string name="user">普通用户</string>
 </resources>
