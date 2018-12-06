@@ -139,6 +139,8 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
             if(resultCode == LOCATION_REQUEST){
                 Bundle bundle = data.getExtras();
                 destination.setText(bundle.getString("destination"));
+                destination.setFocusable(false);
+                destination.setFocusableInTouchMode(true);
                 //城市可以从定位那里获取
                 //mSearch.geocode(new GeoCodeOption().city("上海").address("梅赛德斯奔驰文化中心"));
                 mSearch.geocode(new GeoCodeOption().city("上海").address(destination.getText().toString()));
