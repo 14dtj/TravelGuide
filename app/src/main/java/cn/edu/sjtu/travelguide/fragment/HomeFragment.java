@@ -16,7 +16,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.sjtu.travelguide.MainActivity;
-import cn.edu.sjtu.travelguide.MyApplication;
 import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.adapter.BaseFragmentPagerAdapter;
 
@@ -83,7 +82,7 @@ public class HomeFragment extends BaseFragment {
         fragments.add(myFragment);
         adapter = new BaseFragmentPagerAdapter(context.getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(adapter);
-        mViewPager.setOffscreenPageLimit(3);
+        //   mViewPager.setOffscreenPageLimit(3);
         mTabSegment.setupWithViewPager(mViewPager, false);
     }
 

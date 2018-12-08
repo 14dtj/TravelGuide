@@ -29,12 +29,12 @@ public class MyApplication extends Application implements AsyncTask {
         //包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
         SDKInitializer.setCoordType(CoordType.BD09LL);
         //自动登录
-//        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-//        if (sp != null) {
-//            String username = sp.getString("username", "");
-//            String password = sp.getString("password", "0");
-//            RMPService.getInstance().login(username, password, this);
-//        }
+        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
+        if (sp != null) {
+            String username = sp.getString("username", "");
+            String password = sp.getString("password", "0");
+            RMPService.getInstance().login(username, password, this);
+        }
     }
 
     public static User getUser() {

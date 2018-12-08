@@ -13,9 +13,10 @@ import cn.edu.sjtu.travelguide.R;
 public class RecommendFragment extends BaseFragment {
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;
+
     @Override
     protected View onCreateView() {
-        FrameLayout layout = (FrameLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_about, null);
+        FrameLayout layout = (FrameLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_recommend, null);
         ButterKnife.bind(this, layout);
         mTopBar.setTitle("推荐");
         return layout;

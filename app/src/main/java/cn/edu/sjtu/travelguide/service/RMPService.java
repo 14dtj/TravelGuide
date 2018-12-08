@@ -12,7 +12,7 @@ import cn.edu.sjtu.travelguide.entity.User;
 import cn.edu.sjtu.travelguide.entity.UserList;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -87,13 +87,15 @@ public class RMPService {
                 if (user.getPassword().equals(password)) {
                     MyApplication.setUser(user);
                     task.onSuccess();
+                }else{
+                    task.onFailure();
                 }
             }
         }
     }
 
     /**
-     * 用户登录
+     * 用户注册
      *
      * @param user
      * @return
@@ -106,6 +108,43 @@ public class RMPService {
         RequestBody body = RequestBody.create(mediaType, data);
         Request request = new Request.Builder().url(url)
                 .post(body).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, e.getMessage());
+                task.onFailure();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ResponseBody body = response.body();
+                if (body == null) {
+                    task.onFailure();
+                } else {
+                    String jsonStr = body.string();
+                    Log.d(TAG, jsonStr);
+                    task.onSuccess();
+                }
+            }
+        });
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param user
+     * @return
+     */
+    public void changePwd(User user, final AsyncTask task) {
+        String url = BASE_URL + "User/" + user.getId() + "?userid=686348997739552";
+        MediaType mediaType = MediaType.parse("application/json");
+        Gson gson = new Gson();
+        String data = gson.toJson(user);
+        RequestBody body = RequestBody.create(mediaType, data);
+
+        Request request = new Request.Builder().url(url).header("passwd", "TJsoulshe.")
+                .put(body).build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override

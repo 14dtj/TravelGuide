@@ -11,6 +11,8 @@ import cn.edu.sjtu.travelguide.fragment.LoginFragment;
 
 public class MainActivity extends QMUIFragmentActivity {
     private BaseFragment currentFragment;
+    private HomeFragment homeFragment;
+    private LoginFragment loginFragment;
 
     @Override
     protected int getContextViewId() {
@@ -23,11 +25,13 @@ public class MainActivity extends QMUIFragmentActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
-       // if (MyApplication.getUser() == null) {
-     //       currentFragment = new HomeFragment();
-     //   } else {
-            currentFragment = new LoginFragment();
-     //   }
+        if (MyApplication.getUser() != null) {
+            homeFragment = new HomeFragment();
+            currentFragment = homeFragment;
+        } else {
+            loginFragment = new LoginFragment();
+            currentFragment = loginFragment;
+        }
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(getContextViewId(), currentFragment, currentFragment.getClass().getSimpleName())
@@ -39,5 +43,19 @@ public class MainActivity extends QMUIFragmentActivity {
             savedInstanceState.remove(FRAGMENTS_TAG);
 
         }
+    }
+
+    public void change2Home() {
+        if (homeFragment == null) {
+            homeFragment = new HomeFragment();
+        }
+        startFragment(homeFragment);
+    }
+
+    public void change2Login() {
+        if (loginFragment == null) {
+            loginFragment = new LoginFragment();
+        }
+        startFragment(loginFragment);
     }
 }

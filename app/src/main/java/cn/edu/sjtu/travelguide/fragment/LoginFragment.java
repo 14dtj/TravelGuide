@@ -1,7 +1,6 @@
 package cn.edu.sjtu.travelguide.fragment;
 
 import android.content.SharedPreferences;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -72,8 +71,7 @@ public class LoginFragment extends BaseFragment implements AsyncTask {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RegisterFragment registerFragment = new RegisterFragment();
-                startFragment(registerFragment);
+                startFragment(new RegisterFragment());
             }
         });
         return layout;
@@ -94,7 +92,7 @@ public class LoginFragment extends BaseFragment implements AsyncTask {
                             .putString("password", passwordStr)
                             .apply();
                 }
-                startFragment(new HomeFragment());
+                context.change2Home();
             }
         });
     }

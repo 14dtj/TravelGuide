@@ -15,39 +15,14 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="70dp">
-
-            <com.qmuiteam.qmui.widget.QMUIRadiusImageView
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:clickable="true"
-                android:src="@mipmap/logo"
-                app:qmui_border_color="?attr/qmui_config_color_gray_6"
-                app:qmui_border_width="1px"
-                app:qmui_is_circle="true"
-                app:qmui_selected_border_color="?attr/qmui_config_color_gray_4"
-                app:qmui_selected_border_width="1px"
-                app:qmui_selected_mask_color="?attr/qmui_config_color_gray_8" />
-
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="160dp"
-                android:text="@string/app_name"
-                android:textColor="#000"
-                android:textSize="23sp"
-                android:typeface="monospace" />
+            android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:id="@+id/rl_userName"
+                android:id="@+id/rl_oldPwd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tv_title"
                 android:layout_marginTop="40dp"
+                android:layout_below="@id/tv_title"
                 android:background="@drawable/rectangle_edittext">
 
                 <ImageView
@@ -58,7 +33,7 @@
                     android:paddingLeft="30dp"
                     android:paddingTop="15dp"
                     android:paddingBottom="15dp"
-                    android:src="@mipmap/ic_edittextuname" />
+                    android:src="@mipmap/ic_edittextupwd" />
 
                 <View
                     android:id="@+id/viewName"
@@ -70,7 +45,7 @@
                     android:background="@color/app_color_description" />
 
                 <EditText
-                    android:id="@+id/et_userName"
+                    android:id="@+id/et_oldPwd"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_centerVertical="true"
@@ -78,7 +53,7 @@
                     android:layout_toRightOf="@id/viewName"
                     android:background="@null"
                     android:ems="19"
-                    android:hint="@string/username"
+                    android:hint="@string/oldPwd"
                     android:textColorHint="@color/app_color_description"
                     android:textCursorDrawable="@drawable/color_cursor"
                     android:textSize="15sp" />
@@ -96,63 +71,10 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/rl_email"
+                android:id="@+id/rl_newPwd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/rl_userName"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/rectangle_edittext">
-
-                <ImageView
-                    android:id="@+id/iv_emailIconName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="30dp"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp"
-                    android:src="@mipmap/ic_edittextemail" />
-
-                <View
-                    android:id="@+id/emailName"
-                    android:layout_width="1dip"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@id/iv_emailIconName"
-                    android:background="@color/app_color_description" />
-
-                <EditText
-                    android:id="@+id/et_emailName"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@id/emailName"
-                    android:background="@null"
-                    android:ems="19"
-                    android:hint="@string/email"
-                    android:textColorHint="@color/app_color_description"
-                    android:textCursorDrawable="@drawable/color_cursor"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:id="@+id/iv_emailClear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="20dp"
-                    android:src="@mipmap/ic_backspace_grey600_24dp"
-                    android:visibility="invisible" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/rl_userPassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/rl_email"
+                android:layout_below="@id/rl_oldPwd"
                 android:layout_marginTop="1dp"
                 android:background="@drawable/rectangle_edittext">
 
@@ -176,7 +98,7 @@
                     android:background="@color/app_color_description" />
 
                 <EditText
-                    android:id="@+id/et_password"
+                    android:id="@+id/et_newPwd"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_centerVertical="true"
@@ -185,7 +107,7 @@
                     android:background="@null"
                     android:drawablePadding="5dp"
                     android:ems="19"
-                    android:hint="@string/pwd"
+                    android:hint="@string/newPwd"
                     android:inputType="textPassword"
                     android:textColorHint="@color/app_color_description"
                     android:textCursorDrawable="@drawable/color_cursor"
@@ -203,36 +125,10 @@
 
             </RelativeLayout>
 
-            <RadioGroup
-                android:id="@+id/main_radiogroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/rl_userPassword"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/common_user"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:checked="true"
-                    android:text="@string/user"
-                    android:textColor="@color/app_color_blue" />
-
-                <RadioButton
-                    android:id="@+id/logistics_business"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:text="@string/logistics"
-                    android:textColor="@color/app_color_blue" />
-            </RadioGroup>
 
             <RelativeLayout
                 style="@style/button_wrapper_style"
-                android:layout_below="@id/main_radiogroup">
+                android:layout_below="@id/rl_newPwd">
 
                 <com.qmuiteam.qmui.widget.QMUIFloatLayout
                     android:id="@+id/qmuidemo_floatlayout"
@@ -243,7 +139,7 @@
                     app:qmui_childVerticalSpacing="20dp">
 
                     <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
-                        android:id="@+id/main_register_btn"
+                        android:id="@+id/complete_btn"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
@@ -251,7 +147,7 @@
                         android:paddingTop="10dp"
                         android:paddingRight="16dp"
                         android:paddingBottom="10dp"
-                        android:text="@string/register"
+                        android:text="@string/complete"
                         app:qmui_isRadiusAdjustBounds="true" />
                 </com.qmuiteam.qmui.widget.QMUIFloatLayout>
             </RelativeLayout>

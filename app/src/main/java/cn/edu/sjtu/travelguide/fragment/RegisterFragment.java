@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.qmuiteam.qmui.arch.QMUIFragment;
@@ -24,6 +24,8 @@ import cn.edu.sjtu.travelguide.util.EditTextClearTools;
 public class RegisterFragment extends QMUIFragment implements AsyncTask {
     @BindView(R.id.et_userName)
     EditText userName;
+    @BindView(R.id.et_emailName)
+    EditText email;
     @BindView(R.id.et_password)
     EditText password;
     @BindView(R.id.main_register_btn)
@@ -32,10 +34,14 @@ public class RegisterFragment extends QMUIFragment implements AsyncTask {
     ImageView unameClear;
     @BindView(R.id.iv_pwdClear)
     ImageView pwdClear;
+    @BindView(R.id.iv_emailClear)
+    ImageView emailClear;
     @BindView(R.id.topbar)
     QMUITopBarLayout mTopBar;
-    @BindView(R.id.main_radiogroup)
-    RadioGroup radioGroup;
+    @BindView(R.id.common_user)
+    RadioButton userRadio;
+    @BindView(R.id.logistics_business)
+    RadioButton logisticsRadio;
 
     private RMPService rmpService;
     private RegisterFragment registerFragment;
@@ -51,14 +57,21 @@ public class RegisterFragment extends QMUIFragment implements AsyncTask {
         mTopBar.setTitle("注册");
         EditTextClearTools.addClearListener(userName, unameClear);
         EditTextClearTools.addClearListener(password, pwdClear);
+        EditTextClearTools.addClearListener(password, emailClear);
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (userName.getText() != null && password.getText() != null) {
                     String usernameStr = userName.getText().toString();
                     String passwordStr = password.getText().toString();
-                    int role = radioGroup.getCheckedRadioButtonId();
-                    User user = new User(usernameStr, passwordStr, role);
+                    String emailStr = email.getText().toString();
+                    int role = 0;
+                    if (userRadio.isChecked()) {
+                        role = 0;
+                    } else if (logisticsRadio.isChecked()) {
+                        role = 1;
+                    }
+                    User user = new User(usernameStr, emailStr, passwordStr, role);
                     rmpService.register(user, registerFragment);
                 }
             }

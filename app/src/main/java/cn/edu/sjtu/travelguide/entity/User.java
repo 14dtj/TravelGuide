@@ -22,8 +22,9 @@ public class User {
         this.hassearched = hassearched;
     }
 
-    public User(String username, String password, int role) {
+    public User(String username, String email, String password, int role) {
         this.username = username;
+        this.email = email;
         this.password = password;
         this.role = role;
     }
