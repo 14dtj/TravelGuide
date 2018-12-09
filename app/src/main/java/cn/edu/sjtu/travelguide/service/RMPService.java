@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 import cn.edu.sjtu.travelguide.MyApplication;
+import cn.edu.sjtu.travelguide.entity.SearchRecord;
 import cn.edu.sjtu.travelguide.entity.User;
 import cn.edu.sjtu.travelguide.entity.UserList;
 import okhttp3.Call;
@@ -86,7 +87,7 @@ public class RMPService {
                 if (user.getPassword().equals(password)) {
                     MyApplication.setUser(user);
                     task.onSuccess();
-                }else{
+                } else {
                     task.onFailure();
                 }
             }
@@ -164,6 +165,16 @@ public class RMPService {
                 }
             }
         });
+    }
+
+    /**
+     * 增加搜索记录
+     *
+     * @param record
+     * @return
+     */
+    public void addSearchRecord(SearchRecord record) {
+
     }
 
 

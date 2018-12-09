@@ -6,7 +6,8 @@ package cn.edu.sjtu.travelguide.entity;
 public class SearchRecord {
     private long id;
     private String search_time;
-    private long poi_id;
+    private long user_id;
+    private String name;
 
     public long getId() {
         return id;
@@ -24,11 +25,20 @@ public class SearchRecord {
         this.search_time = search_time;
     }
 
-    public long getPoi_id() {
-        return poi_id;
+
+    public long getUser_id() {
+        return user_id;
     }
 
-    public void setPoi_id(long poi_id) {
-        this.poi_id = poi_id;
+    public void setUser_id(long user_id) {
+        this.user_id = user_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
