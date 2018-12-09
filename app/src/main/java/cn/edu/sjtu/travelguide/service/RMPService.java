@@ -12,7 +12,6 @@ import cn.edu.sjtu.travelguide.entity.User;
 import cn.edu.sjtu.travelguide.entity.UserList;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

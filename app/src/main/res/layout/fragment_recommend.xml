@@ -10,10 +10,11 @@
         android:background="@color/qmui_config_color_background"
         android:fitsSystemWindows="true">
 
-        <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
-            android:id="@+id/groupListView"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_post_t"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:fadingEdge="none" />
 
     </ScrollView>
 
