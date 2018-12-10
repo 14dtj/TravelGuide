@@ -5,6 +5,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import cn.edu.sjtu.travelguide.MyApplication;
@@ -25,6 +27,8 @@ public class RMPService {
     private static RMPService instance;
     private OkHttpClient client;
     private static final String BASE_URL = "http://119.23.241.119:8080/Entity/U18494e8f6fa80/travel/";
+    private final Gson gson = new Gson();
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static RMPService getInstance() {
         if (instance == null) {
@@ -78,7 +82,6 @@ public class RMPService {
      * @param task
      */
     private void onLoginResponse(String jsonStr, String password, AsyncTask task) {
-        Gson gson = new Gson();
         UserList response = gson.fromJson(jsonStr, UserList.class);
         if (response != null) {
             List<User> users = response.getUser();
@@ -103,7 +106,6 @@ public class RMPService {
     public void register(User user, final AsyncTask task) {
         String url = BASE_URL + "User/";
         MediaType mediaType = MediaType.parse("application/json");
-        Gson gson = new Gson();
         String data = gson.toJson(user);
         RequestBody body = RequestBody.create(mediaType, data);
         Request request = new Request.Builder().url(url)
@@ -139,7 +141,6 @@ public class RMPService {
     public void changePwd(User user, final AsyncTask task) {
         String url = BASE_URL + "User/" + user.getId() + "?userid=686348997739552";
         MediaType mediaType = MediaType.parse("application/json");
-        Gson gson = new Gson();
         String data = gson.toJson(user);
         RequestBody body = RequestBody.create(mediaType, data);
 
@@ -170,10 +171,41 @@ public class RMPService {
     /**
      * 增加搜索记录
      *
-     * @param record
+     * @param record name必填, 其他可以不填
      * @return
      */
     public void addSearchRecord(SearchRecord record) {
+        User user = MyApplication.getUser();
+        if (user == null) {
+            return;
+        }
+        record.setUser_id(user.getId());
+        record.setSearch_time(df.format(new Date()));
+        String url = BASE_URL + "User_poi/";
+        MediaType mediaType = MediaType.parse("application/json");
+        String data = gson.toJson(record);
+        RequestBody body = RequestBody.create(mediaType, data);
+        Request request = new Request.Builder().url(url)
+                .post(body).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ResponseBody body = response.body();
+                if (body == null) {
+                    Log.e(TAG, response.code() + "");
+                } else {
+                    String jsonStr = body.string();
+                    SearchRecord searchRecord = gson.fromJson(jsonStr, SearchRecord.class);
+                    Log.d(TAG, searchRecord.getName());
+                }
+            }
+        });
 
     }
 
