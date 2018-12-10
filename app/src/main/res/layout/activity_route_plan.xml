@@ -21,7 +21,10 @@
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
             android:onClick="searchButtonProcess"
-            android:text="驾车" />
+            android:text="驾车"
+            android:layout_weight="0.33"
+            android:background="@drawable/route_button"
+            />
 
         <Button
             android:id="@+id/transit"
@@ -30,7 +33,9 @@
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
             android:onClick="searchButtonProcess"
-            android:text="公交"/>
+            android:text="公交"
+            android:layout_weight="0.33"
+            android:background="@drawable/route_button"/>
 
         <Button
             android:id="@+id/walk"
@@ -39,7 +44,9 @@
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
             android:onClick="searchButtonProcess"
-            android:text="步行"/>
+            android:text="步行"
+            android:layout_weight="0.33"
+            android:background="@drawable/route_button"/>
 
     </LinearLayout>
 

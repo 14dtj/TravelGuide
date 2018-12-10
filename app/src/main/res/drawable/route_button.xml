@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--按钮点击state_pressed之后颜色-->
+    <item android:state_activated="true">
+        <shape>
+            <solid android:color="@color/app_color_blue_pressed" />
+            <corners android:radius="5dp" />
+        </shape>
+    </item>
+
+
+
+    <!--按钮默认颜色-->
+    <item android:state_activated="false" >
+        <shape>
+            <solid android:color="@color/transparent" />
+            <corners android:radius="5dp" />
+        </shape>
+    </item>
+
+
+</selector>

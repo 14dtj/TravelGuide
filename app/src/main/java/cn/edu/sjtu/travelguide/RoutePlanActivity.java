@@ -91,6 +91,9 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     String endNodeStr = "百度科技园";
     boolean hasShownDialogue = false;
 
+    Boolean button_drive = false;
+    Boolean button_walk = false;
+    Boolean button_transit = false;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -121,7 +124,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
      * @param v
      */
     public void searchButtonProcess(View v) {
-        System.out.println(v);
+
         // 重置浏览节点的路线数据
         route = null;
         mBtnPre.setVisibility(View.INVISIBLE);
@@ -133,7 +136,9 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endNodeStr);
 
         // 实际使用中请对起点终点城市进行正确的设定
-
+        findViewById(R.id.transit).setActivated(false);
+        findViewById(R.id.walk).setActivated(false);
+        findViewById(R.id.drive).setActivated(false);
         if (v.getId() == R.id.drive) {
 //            AlertDialog alertDialog1 = new AlertDialog.Builder(this)
 //                    .setTitle("这是标题")//标题
@@ -141,19 +146,32 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
 //                    .setIcon(R.mipmap.ic_launcher)//图标
 //                    .create();
 //            alertDialog1.show();
+            button_drive=!button_drive;
+            button_transit=false;
+            button_walk=false;
 
+            findViewById(R.id.drive).setActivated(button_drive);
             mSearch.drivingSearch((new DrivingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 1;
         } else if (v.getId() == R.id.transit) {
+            button_transit=!button_transit;
+            button_drive=false;
+            button_walk=false;
+            findViewById(R.id.transit).setActivated(button_transit);
             mSearch.transitSearch((new TransitRoutePlanOption())
                     .from(stNode).city("北京").to(enNode));
             nowSearchType = 2;
         } else if (v.getId() == R.id.walk) {
+            button_walk=!button_walk;
+            button_drive=false;
+            button_transit=false;
+            findViewById(R.id.walk).setActivated(button_walk);
             mSearch.walkingSearch((new WalkingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 3;
         }
+
     }
 
     /**
