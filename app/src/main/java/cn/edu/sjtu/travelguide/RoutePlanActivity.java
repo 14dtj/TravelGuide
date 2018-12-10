@@ -93,9 +93,13 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_route_plan);
+
         CharSequence titleLable = "路线规划功能";
+
         setTitle(titleLable);
+
         // 初始化地图
         mMapView = (MapView) findViewById(R.id.map);
         mBaidumap = mMapView.getMap();
@@ -105,6 +109,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         mBtnNext.setVisibility(View.INVISIBLE);
         // 地图点击事件处理
         mBaidumap.setOnMapClickListener(this);
+        System.out.println("5");
         // 初始化搜索模块，注册事件监听
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
@@ -116,6 +121,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
      * @param v
      */
     public void searchButtonProcess(View v) {
+        System.out.println(v);
         // 重置浏览节点的路线数据
         route = null;
         mBtnPre.setVisibility(View.INVISIBLE);
@@ -128,13 +134,14 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
 
         // 实际使用中请对起点终点城市进行正确的设定
 
-        if (v.getId() == R.id.mass) {
-            PlanNode stMassNode = PlanNode.withCityNameAndPlaceName("北京", "天安门");
-            PlanNode enMassNode = PlanNode.withCityNameAndPlaceName("上海", "东方明珠");
+        if (v.getId() == R.id.drive) {
+//            AlertDialog alertDialog1 = new AlertDialog.Builder(this)
+//                    .setTitle("这是标题")//标题
+//                    .setMessage("这是内容")//内容
+//                    .setIcon(R.mipmap.ic_launcher)//图标
+//                    .create();
+//            alertDialog1.show();
 
-            mSearch.masstransitSearch(new MassTransitRoutePlanOption().from(stMassNode).to(enMassNode));
-            nowSearchType = 0;
-        } else if (v.getId() == R.id.drive) {
             mSearch.drivingSearch((new DrivingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 1;
@@ -146,10 +153,6 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             mSearch.walkingSearch((new WalkingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 3;
-        } else if (v.getId() == R.id.bike) {
-            mSearch.bikingSearch((new BikingRoutePlanOption())
-                    .from(stNode).to(enNode));
-            nowSearchType = 4;
         }
     }
 
