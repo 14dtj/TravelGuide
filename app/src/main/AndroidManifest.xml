@@ -45,12 +45,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
-        <!-- <meta-data -->
-        <!-- android:name="com.baidu.lbsapi.API_KEY" -->
-        <!-- android:value="pkA283DucUH6mOxG2raWrxrFV5FA8MMG"/> -->
+        <!--<meta-data-->
+            <!--android:name="com.baidu.lbsapi.API_KEY"-->
+            <!--android:value="e9QjU7TryjGqkqoRTBZwQ9K9tEKzh6GO"/>-->
+        <!--<meta-data-->
+            <!--android:name="com.baidu.lbsapi.API_KEY"-->
+            <!--android:value="pkA283DucUH6mOxG2raWrxrFV5FA8MMG" />-->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="pkA283DucUH6mOxG2raWrxrFV5FA8MMG" />
+            android:value="TQiiqYtgiIr5GGEcsV5fBzF2KQqlMNrF"/>
 
         <service
             android:name="com.baidu.location.f"
