@@ -8,11 +8,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ZoomControls;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -33,7 +37,14 @@ import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.karumi.expandableselector.ExpandableItem;
+import com.karumi.expandableselector.ExpandableSelector;
+import com.karumi.expandableselector.ExpandableSelectorListener;
+import com.karumi.expandableselector.OnExpandableItemClickListener;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,10 +62,16 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     private BaiduMap mBaiduMap;
     GeoCoder mSearch = null; // 搜索模块，也可去掉地图模块独立使用
 
-//    @BindView(R.id.departure)
-//    EditText departure;
+    @BindView(R.id.departure)
+    EditText departure;
     @BindView(R.id.destination)
     EditText destination;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.menu)
+    ListView listview;
+
+    private ConstraintLayout layout;
 
     LocationClient mLocClient;
     public MyLocationListener myListener = new MyLocationListener();
@@ -76,41 +93,46 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     @Override
     protected View onCreateView() {
         //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
+        layout = (ConstraintLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         ButterKnife.bind(this, layout);
         //departure.bringToFront();
+
+        departure.setBackgroundColor(Color.WHITE);
+        departure.setVisibility(View.INVISIBLE);
         destination.bringToFront();
-        //departure.setBackgroundColor(Color.WHITE);
         destination.setBackgroundColor(Color.WHITE);
 //        destination.setFocusable(true);
 //        destination.setFocusableInTouchMode(true);
-
-        destination.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        listview.bringToFront();
+        fab.bringToFront();
+        //fab.setVisibility(View.INVISIBLE);
+        fab.hide();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                这里规划路线-------TO DO
+                 */
+            }
+        });
+        View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if(b){
                     if(getActivity()!=null){
+                        getFragmentManager().beginTransaction().addToBackStack(this.getClass().getName());
                         Intent intent = new Intent(getActivity(), SearchActivity.class);
+                        intent.putExtra("uptext", destination.getText().toString());
+                        intent.putExtra("downtext", departure.getText().toString());
                         startActivityForResult(intent,2);//2代表searchActivity
                     }
-
-//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                    if(!sf.isAdded()){
-//                        if(currentFragment != null){
-//                            ft.hide(currentFragment);
-//                        }
-//                        ft.add(R.id.fragment, sf, sf.getClass().getName());
-//                    }else{
-//                        ft.hide(currentFragment).show(sf);
-//                    }
-//                    currentFragment = sf;
-//                    ft.commit();
-                }else{
-
                 }
             }
-        });
+        };
+
+        destination.setOnFocusChangeListener(onFocusChangeListener);
+        departure.setOnFocusChangeListener(onFocusChangeListener);
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mCurrentMode = LocationMode.COMPASS;
@@ -138,9 +160,30 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         if(requestCode == 2){
             if(resultCode == LOCATION_REQUEST){
                 Bundle bundle = data.getExtras();
-                destination.setText(bundle.getString("destination"));
-                destination.setFocusable(false);
-                destination.setFocusableInTouchMode(true);
+                if(bundle.getString("departure").equals("")){
+                    destination.setText(bundle.getString("destination"));
+                    destination.setFocusable(false);
+                    destination.setFocusableInTouchMode(true);
+                }else{
+                    //动态添加出发地的输入框控件
+//                    ConstraintSet cSet = new ConstraintSet();
+//                    EditText depart_new = new EditText(getContext());
+//                    depart_new.setText(bundle.getString("departure"));
+//                    layout.addView(depart_new);
+//                    cSet.clone(layout);
+//                    cSet.constrainWidth(depart_new.getId(), ConstraintLayout.layoutParams.WRAP_CONTENT);
+//                    cSet.constrainHeight(depart_new.getId(), 317);
+                    destination.setText(bundle.getString("departure"));
+                    destination.setFocusable(false);
+                    destination.setFocusableInTouchMode(true);
+
+                    departure.setVisibility(View.VISIBLE);
+                    departure.bringToFront();
+                    departure.setText(bundle.getString("destination"));
+                    departure.setFocusable(false);
+                    departure.setFocusableInTouchMode(true);
+                }
+                fab.show();
                 //城市可以从定位那里获取
                 //mSearch.geocode(new GeoCodeOption().city("上海").address("梅赛德斯奔驰文化中心"));
                 mSearch.geocode(new GeoCodeOption().city("上海").address(destination.getText().toString()));
