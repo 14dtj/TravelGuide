@@ -13,14 +13,7 @@
         android:layout_marginTop="5dip"
         android:orientation="horizontal" android:weightSum="1">
 
-        <Button
-            android:id="@+id/mass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dip"
-            android:layout_marginRight="2dip"
-            android:onClick="searchButtonProcess"
-            android:text="跨城交通"/>
+
         <Button
             android:id="@+id/drive"
             android:layout_width="61dp"
@@ -47,14 +40,7 @@
             android:layout_marginRight="2dip"
             android:onClick="searchButtonProcess"
             android:text="步行"/>
-        <Button
-            android:id="@+id/bike"
-            android:layout_width="61dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dip"
-            android:layout_marginRight="2dip"
-            android:onClick="searchButtonProcess"
-            android:text="骑行"/>
+
     </LinearLayout>
 
     <RelativeLayout
