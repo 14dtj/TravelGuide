@@ -36,6 +36,7 @@ import com.baidu.mapapi.search.geocode.GeoCodeOption;
 import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.karumi.expandableselector.ExpandableItem;
 import com.karumi.expandableselector.ExpandableSelector;
@@ -89,6 +90,8 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     private MyLocationData locData;
     boolean isFirstLoc = true; // 是否首次定位
 
+    String mylocation = null;
+    String city = null;
 
     @Override
     protected View onCreateView() {
@@ -114,6 +117,8 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                 /*
                 这里规划路线-------TO DO
                  */
+                String departureLocation = destination.getText().toString();//出发地
+                String destinationLocation = departure.getText().toString();//目的地
             }
         });
         View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
@@ -123,9 +128,19 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                     if(getActivity()!=null){
                         getFragmentManager().beginTransaction().addToBackStack(this.getClass().getName());
                         Intent intent = new Intent(getActivity(), SearchActivity.class);
-                        intent.putExtra("uptext", destination.getText().toString());
-                        intent.putExtra("downtext", departure.getText().toString());
-                        startActivityForResult(intent,2);//2代表searchActivity
+                        if(fab.isShown()){
+                            intent.putExtra("location", mylocation);
+                            intent.putExtra("destination", departure.getText().toString());
+                            intent.putExtra("departure", destination.getText().toString());
+                            startActivityForResult(intent,2);//2代表searchActivity
+                        }else{
+                            //第一次搜索
+                            intent.putExtra("location", mylocation);
+                            intent.putExtra("destination", "");
+                            intent.putExtra("departure", departure.getText().toString());
+                            startActivityForResult(intent,2);//2代表searchActivity
+                        }
+
                     }
                 }
             }
@@ -146,6 +161,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         mLocClient = new LocationClient(getContext());
         mLocClient.registerLocationListener(myListener);
         LocationClientOption option = new LocationClientOption();
+        option.setIsNeedAddress(true);
         option.setOpenGps(true);
         option.setCoorType("bd09ll");
         option.setScanSpan(1000);
@@ -160,11 +176,12 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         if(requestCode == 2){
             if(resultCode == LOCATION_REQUEST){
                 Bundle bundle = data.getExtras();
-                if(bundle.getString("departure").equals("")){
-                    destination.setText(bundle.getString("destination"));
+                if(bundle.getString("departure").equals("") && bundle.getString("destination").equals("")){
+                    destination.setText("");
                     destination.setFocusable(false);
                     destination.setFocusableInTouchMode(true);
-                }else{
+                    departure.setVisibility(View.INVISIBLE);
+                }else if(!bundle.getString("departure").equals("") && !bundle.getString("destination").equals("")){
                     //动态添加出发地的输入框控件
 //                    ConstraintSet cSet = new ConstraintSet();
 //                    EditText depart_new = new EditText(getContext());
@@ -182,11 +199,11 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                     departure.setText(bundle.getString("destination"));
                     departure.setFocusable(false);
                     departure.setFocusableInTouchMode(true);
+
+                    mSearch.geocode(new GeoCodeOption().city(city).address(bundle.getString("destination")));
                 }
                 fab.show();
-                //城市可以从定位那里获取
-                //mSearch.geocode(new GeoCodeOption().city("上海").address("梅赛德斯奔驰文化中心"));
-                mSearch.geocode(new GeoCodeOption().city("上海").address(destination.getText().toString()));
+
             }
         }
     }
@@ -265,14 +282,31 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                 result.getLocation().latitude,
                 result.getLocation().longitude);
 
-        Toast.makeText(getActivity(), strInfo, Toast.LENGTH_LONG).show();
+       // Toast.makeText(getActivity(), strInfo, Toast.LENGTH_LONG).show();
 
         Log.e("GeoCodeDemo", "onGetGeoCodeResult = " + result.toString());
     }
 
     @Override
-    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
+    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(getActivity(), "抱歉，未能找到结果", Toast.LENGTH_LONG).show();
+            return;
+        }
 
+//        mBaiduMap.clear();
+//        mBaiduMap.addOverlay(new MarkerOptions()
+//                .position(result.getLocation())
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_marka)));
+//
+//        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
+
+        mylocation = result.getAddress();
+        departure.setText(result.getAddress().toString());
+
+        //Toast.makeText(getActivity(), result.getAddress() + " adcode: " + result.getAdcode(), Toast.LENGTH_LONG).show();
+
+        Log.e("GeoCodeDemo", "ReverseGeoCodeResult = " + result.toString());
     }
 
     public class MyLocationListener implements BDLocationListener {
@@ -298,6 +332,9 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                 builder.target(ll).zoom(18.0f);
                 mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
             }
+
+            city = location.getCity();
+            mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(new LatLng(location.getLatitude(), location.getLongitude())));
         }
     }
 }
