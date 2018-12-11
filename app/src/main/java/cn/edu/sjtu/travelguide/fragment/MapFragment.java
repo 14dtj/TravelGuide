@@ -52,6 +52,7 @@ import butterknife.ButterKnife;
 import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.RoutePlanActivity;
 import cn.edu.sjtu.travelguide.SearchActivity;
+import cn.edu.sjtu.travelguide.SlideVerticalActivity;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -120,7 +121,8 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                  */
                 String departureLocation = destination.getText().toString();//出发地
                 String destinationLocation = departure.getText().toString();//目的地
-                Intent intent = new Intent(getActivity(), RoutePlanActivity.class);
+                //Intent intent = new Intent(getActivity(), RoutePlanActivity.class);
+                Intent intent = new Intent(getActivity(), SlideVerticalActivity.class);
                 intent.putExtra("departureLocation", departureLocation);
                 intent.putExtra("destinationLocation", destinationLocation);
                 startActivity(intent);
