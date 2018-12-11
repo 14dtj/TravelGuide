@@ -37,4 +37,6 @@ dependencies {
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:v1.9.7'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'com.karumi:expandableselector:1.0.0'
+    compile 'com.karumi:expandableselector:1.0.0'
+    compile 'com.getbase:floatingactionbutton:1.10.1'
 }

@@ -8,15 +8,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.ZoomControls;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -38,21 +35,12 @@ import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
-import com.karumi.expandableselector.ExpandableItem;
-import com.karumi.expandableselector.ExpandableSelector;
-import com.karumi.expandableselector.ExpandableSelectorListener;
-import com.karumi.expandableselector.OnExpandableItemClickListener;
-import com.qmuiteam.qmui.widget.QMUITopBarLayout;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.RoutePlanActivity;
 import cn.edu.sjtu.travelguide.SearchActivity;
-import cn.edu.sjtu.travelguide.SlideVerticalActivity;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -71,8 +59,19 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     EditText destination;
     @BindView(R.id.fab)
     FloatingActionButton fab;
-    @BindView(R.id.menu)
-    ListView listview;
+    @BindView(R.id.publicTraffic)
+    FloatingActionButton publicTraffic;//规划路线
+    @BindView(R.id.trafficCondition)
+    FloatingActionButton trafficButton;//查看交通状况
+
+//    @BindView(R.id.tv1)
+//    TextView tv1;
+//    @BindView(R.id.tv2)
+//    TextView tv2;
+
+//    @BindView(R.id.menu)
+//    ListView listview;
+//    private ArrayList<Drawable> mList;
 
     private ConstraintLayout layout;
 
@@ -97,37 +96,110 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
 
     @Override
     protected View onCreateView() {
-        //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         layout = (ConstraintLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         ButterKnife.bind(this, layout);
-        //departure.bringToFront();
 
         departure.setBackgroundColor(Color.WHITE);
         departure.setVisibility(View.INVISIBLE);
         destination.bringToFront();
         destination.setBackgroundColor(Color.WHITE);
-//        destination.setFocusable(true);
-//        destination.setFocusableInTouchMode(true);
-        listview.bringToFront();
+
+//        Typeface font = Typeface.createFromAsset(getActivity().getAssets(),"fonts/fa-solid-900.ttf");
+//        tv1.setTypeface(font);
+//        tv2.setTypeface(font);
+//        tv1.bringToFront();
+//        tv2.bringToFront();
+//        tv1.setBackgroundColor(Color.WHITE);
+//        tv2.setBackgroundColor(Color.WHITE);
+
+//        listview.bringToFront();
+//        List<ListItemView> lists = new ArrayList<>();
+//        lists.add(new ListItemView(R.drawable.bus));
+//        lists.add(new ListItemView(R.drawable.ybr));
+
+//
+//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//            }
+//        });
+
+//        int[] images = new int[]{R.drawable.ybr, R.drawable.bus};
+//        String[] titles = new String[]{"1","2"};
+//        List<Map<String, Object>> listitems = new ArrayList<Map<String, Object>>();
+//        for(int i=0;i<images.length;i++){
+//            Map<String, Object> map = new HashMap<String, Object>();
+//            map.put("image", images[i]);
+//            map.put("title", titles[i]);
+//            listitems.add(map);
+//        }
+//
+//        SimpleAdapter adapter = new SimpleAdapter(getActivity(), listitems, R.layout.icon_items, new String[]{"title", "image"},
+//                new int[]{R.id.title, R.id.image});
+//        listview.setAdapter(adapter);
+//        Resources res = this.getResources();
+//        mList = new ArrayList<Drawable>();
+//        mList.add(res.getDrawable(R.drawable.ybr));
+//        mList.add(res.getDrawable(R.drawable.bus));
+
+
+        publicTraffic.bringToFront();
+        trafficButton.bringToFront();
+        fab.setBackgroundResource(R.drawable.bus);
         fab.bringToFront();
-        //fab.setVisibility(View.INVISIBLE);
         fab.hide();
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        View.OnClickListener fabListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
-                这里规划路线-------TO DO
-                 */
-                String departureLocation = destination.getText().toString();//出发地
-                String destinationLocation = departure.getText().toString();//目的地
-                //Intent intent = new Intent(getActivity(), RoutePlanActivity.class);
-                Intent intent = new Intent(getActivity(), SlideVerticalActivity.class);
-                intent.putExtra("departureLocation", departureLocation);
-                intent.putExtra("destinationLocation", destinationLocation);
-                startActivity(intent);
+                switch (view.getId()){
+                    case R.id.publicTraffic:
+
+                        break;
+                    case R.id.trafficCondition:
+                        if(mBaiduMap.isTrafficEnabled()){
+                            mBaiduMap.setTrafficEnabled(false);
+                            //trafficButton.setBackgroundResource(R.drawable.invisibility);
+                            trafficButton.setImageResource(R.drawable.invisibility);
+                        }else{
+                            mBaiduMap.setTrafficEnabled(true);
+                            //trafficButton.setBackgroundResource(R.drawable.visibility);
+                            trafficButton.setImageResource(R.drawable.visibility);
+                        }
+                        break;
+                    case R.id.fab:
+                        String departureLocation = destination.getText().toString();//出发地
+                        String destinationLocation = departure.getText().toString();//目的地
+                        Intent intent = new Intent(getActivity(), RoutePlanActivity.class);
+                        intent.putExtra("departureLocation", departureLocation);
+                        intent.putExtra("destinationLocation", destinationLocation);
+                        startActivity(intent);
+                        break;
+                    default:
+                        break;
+                }
             }
-        });
+        };
+
+        fab.setOnClickListener(fabListener);
+        publicTraffic.setOnClickListener(fabListener);
+        trafficButton.setOnClickListener(fabListener);
+
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                /*
+//                这里规划路线-------TO DO
+//                 */
+//                String departureLocation = destination.getText().toString();//出发地
+//                String destinationLocation = departure.getText().toString();//目的地
+//                Intent intent = new Intent(getActivity(), RoutePlanActivity.class);
+//                intent.putExtra("departureLocation", departureLocation);
+//                intent.putExtra("destinationLocation", destinationLocation);
+//                startActivity(intent);
+//            }
+//        });
         View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
