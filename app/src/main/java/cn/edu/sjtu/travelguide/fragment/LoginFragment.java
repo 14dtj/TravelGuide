@@ -19,6 +19,7 @@ import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.service.AsyncTask;
 import cn.edu.sjtu.travelguide.service.RMPService;
 import cn.edu.sjtu.travelguide.util.EditTextClearTools;
+import okhttp3.ResponseBody;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -79,7 +80,7 @@ public class LoginFragment extends BaseFragment implements AsyncTask {
 
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(ResponseBody body) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {

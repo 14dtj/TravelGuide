@@ -10,20 +10,24 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 import cn.edu.sjtu.travelguide.R;
-import cn.edu.sjtu.travelguide.entity.PoiVO;
+import cn.edu.sjtu.travelguide.entity.SearchRecord;
 
-public class RecommendListAdapter extends BaseQuickAdapter<PoiVO> {
-    public RecommendListAdapter(Context context, List<PoiVO> data) {
+public class RecommendListAdapter extends BaseQuickAdapter<SearchRecord> {
+    private Context context;
+
+    public RecommendListAdapter(Context context, List<SearchRecord> data) {
         super(R.layout.recommend_item, data);
+        this.context = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder baseViewHolder, PoiVO poiVO) {
-        baseViewHolder.setText(R.id.recommend_title, poiVO.name);
-        baseViewHolder.setText(R.id.recommend_address, poiVO.address);
-        baseViewHolder.setText(R.id.recommend_phone, poiVO.phone);
+    protected void convert(BaseViewHolder baseViewHolder, SearchRecord poiVO) {
+        baseViewHolder.setText(R.id.recommend_title, poiVO.getName());
+        baseViewHolder.setText(R.id.recommend_address, poiVO.getAddress());
+        baseViewHolder.setText(R.id.recommend_phone, poiVO.getPhone_num());
+        baseViewHolder.setText(R.id.recommend_detail_url, poiVO.getDetail_url());
         Glide.with(mContext)
-                .load(poiVO.imgUrl)
+                .load(poiVO.getImg_url())
                 .error(android.R.color.black)
                 .crossFade()
                 .into((ImageView) baseViewHolder.getView(R.id.imageview));//设置封面图片

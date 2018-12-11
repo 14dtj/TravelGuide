@@ -18,6 +18,7 @@ import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.entity.User;
 import cn.edu.sjtu.travelguide.service.AsyncTask;
 import cn.edu.sjtu.travelguide.service.RMPService;
+import okhttp3.ResponseBody;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -61,7 +62,7 @@ public class PwdFragment extends BaseFragment implements AsyncTask {
     }
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(ResponseBody body) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {

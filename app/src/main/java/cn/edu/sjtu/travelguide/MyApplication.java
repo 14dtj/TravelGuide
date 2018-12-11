@@ -9,6 +9,7 @@ import com.baidu.mapapi.SDKInitializer;
 import cn.edu.sjtu.travelguide.entity.User;
 import cn.edu.sjtu.travelguide.service.AsyncTask;
 import cn.edu.sjtu.travelguide.service.RMPService;
+import okhttp3.ResponseBody;
 
 /**
  * Created by wanglei on 2018/10/7.
@@ -46,7 +47,7 @@ public class MyApplication extends Application implements AsyncTask {
     }
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(ResponseBody body) {
         //do nothing
     }
 

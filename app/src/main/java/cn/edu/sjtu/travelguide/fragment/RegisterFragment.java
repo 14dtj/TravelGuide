@@ -20,6 +20,7 @@ import cn.edu.sjtu.travelguide.entity.User;
 import cn.edu.sjtu.travelguide.service.AsyncTask;
 import cn.edu.sjtu.travelguide.service.RMPService;
 import cn.edu.sjtu.travelguide.util.EditTextClearTools;
+import okhttp3.ResponseBody;
 
 public class RegisterFragment extends QMUIFragment implements AsyncTask {
     @BindView(R.id.et_userName)
@@ -80,7 +81,7 @@ public class RegisterFragment extends QMUIFragment implements AsyncTask {
     }
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(ResponseBody body) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {

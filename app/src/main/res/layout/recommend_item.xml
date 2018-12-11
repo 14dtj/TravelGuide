@@ -42,4 +42,10 @@
         android:layout_marginBottom="16dp"
         android:textColor="@android:color/white"
         android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/recommend_detail_url"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible" />
 </RelativeLayout>

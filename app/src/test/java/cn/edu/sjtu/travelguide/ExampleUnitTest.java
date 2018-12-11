@@ -2,6 +2,8 @@ package cn.edu.sjtu.travelguide;
 
 import org.junit.Test;
 
+import cn.edu.sjtu.travelguide.service.PoiService;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -13,5 +15,10 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
+    }
+
+    @Test
+    public void testGetPoi() {
+        PoiService.getInstance().addSearchRecord("火锅");
     }
 }

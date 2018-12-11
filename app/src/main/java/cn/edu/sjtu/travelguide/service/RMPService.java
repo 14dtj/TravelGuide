@@ -89,7 +89,7 @@ public class RMPService {
                 User user = users.get(0);
                 if (user.getPassword().equals(password)) {
                     MyApplication.setUser(user);
-                    task.onSuccess();
+                    task.onSuccess(null);
                 } else {
                     task.onFailure();
                 }
@@ -126,7 +126,7 @@ public class RMPService {
                 } else {
                     String jsonStr = body.string();
                     Log.d(TAG, jsonStr);
-                    task.onSuccess();
+                    task.onSuccess(null);
                 }
             }
         });
@@ -162,7 +162,7 @@ public class RMPService {
                 } else {
                     String jsonStr = body.string();
                     Log.d(TAG, jsonStr);
-                    task.onSuccess();
+                    task.onSuccess(null);
                 }
             }
         });
@@ -171,7 +171,7 @@ public class RMPService {
     /**
      * 增加搜索记录
      *
-     * @param record name必填, 其他可以不填
+     * @param record keyword必填, 其他可以不填
      * @return
      */
     public void addSearchRecord(SearchRecord record) {
@@ -206,8 +206,36 @@ public class RMPService {
                 }
             }
         });
-
     }
 
+    /**
+     * 获得推荐
+     *
+     * @param userId
+     * @param task
+     */
+    public void getRecommendPoi(long userId, final AsyncTask task) {
+        String url = BASE_URL + "User_poi/?User_poi.user_id=" + userId;
+        Request request = new Request.Builder().url(url)
+                .get().build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, e.getMessage());
+                task.onFailure();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ResponseBody body = response.body();
+                if (body == null) {
+                    task.onFailure();
+                } else {
+                    task.onSuccess(body);
+                }
+            }
+        });
+    }
 
 }
