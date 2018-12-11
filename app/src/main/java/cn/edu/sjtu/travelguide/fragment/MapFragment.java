@@ -8,11 +8,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.ZoomControls;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -32,13 +36,23 @@ import com.baidu.mapapi.search.geocode.GeoCodeOption;
 import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.karumi.expandableselector.ExpandableItem;
+import com.karumi.expandableselector.ExpandableSelector;
+import com.karumi.expandableselector.ExpandableSelectorListener;
+import com.karumi.expandableselector.OnExpandableItemClickListener;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.sjtu.travelguide.R;
+import cn.edu.sjtu.travelguide.RoutePlanActivity;
 import cn.edu.sjtu.travelguide.SearchActivity;
+import cn.edu.sjtu.travelguide.SlideVerticalActivity;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -51,10 +65,16 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     private BaiduMap mBaiduMap;
     GeoCoder mSearch = null; // 搜索模块，也可去掉地图模块独立使用
 
-//    @BindView(R.id.departure)
-//    EditText departure;
+    @BindView(R.id.departure)
+    EditText departure;
     @BindView(R.id.destination)
     EditText destination;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.menu)
+    ListView listview;
+
+    private ConstraintLayout layout;
 
     LocationClient mLocClient;
     public MyLocationListener myListener = new MyLocationListener();
@@ -72,45 +92,69 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     private MyLocationData locData;
     boolean isFirstLoc = true; // 是否首次定位
 
+    String mylocation = null;
+    String city = null;
 
     @Override
     protected View onCreateView() {
         //supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
+        layout = (ConstraintLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         ButterKnife.bind(this, layout);
         //departure.bringToFront();
+
+        departure.setBackgroundColor(Color.WHITE);
+        departure.setVisibility(View.INVISIBLE);
         destination.bringToFront();
-        //departure.setBackgroundColor(Color.WHITE);
         destination.setBackgroundColor(Color.WHITE);
 //        destination.setFocusable(true);
 //        destination.setFocusableInTouchMode(true);
-
-        destination.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        listview.bringToFront();
+        fab.bringToFront();
+        //fab.setVisibility(View.INVISIBLE);
+        fab.hide();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*
+                这里规划路线-------TO DO
+                 */
+                String departureLocation = destination.getText().toString();//出发地
+                String destinationLocation = departure.getText().toString();//目的地
+                //Intent intent = new Intent(getActivity(), RoutePlanActivity.class);
+                Intent intent = new Intent(getActivity(), SlideVerticalActivity.class);
+                intent.putExtra("departureLocation", departureLocation);
+                intent.putExtra("destinationLocation", destinationLocation);
+                startActivity(intent);
+            }
+        });
+        View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if(b){
                     if(getActivity()!=null){
+                        getFragmentManager().beginTransaction().addToBackStack(this.getClass().getName());
                         Intent intent = new Intent(getActivity(), SearchActivity.class);
-                        startActivityForResult(intent,2);//2代表searchActivity
+                        if(fab.isShown()){
+                            intent.putExtra("location", mylocation);
+                            intent.putExtra("destination", departure.getText().toString());
+                            intent.putExtra("departure", destination.getText().toString());
+                            startActivityForResult(intent,2);//2代表searchActivity
+                        }else{
+                            //第一次搜索
+                            intent.putExtra("location", mylocation);
+                            intent.putExtra("destination", "");
+                            intent.putExtra("departure", departure.getText().toString());
+                            startActivityForResult(intent,2);//2代表searchActivity
+                        }
+
                     }
-
-//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                    if(!sf.isAdded()){
-//                        if(currentFragment != null){
-//                            ft.hide(currentFragment);
-//                        }
-//                        ft.add(R.id.fragment, sf, sf.getClass().getName());
-//                    }else{
-//                        ft.hide(currentFragment).show(sf);
-//                    }
-//                    currentFragment = sf;
-//                    ft.commit();
-                }else{
-
                 }
             }
-        });
+        };
+
+        destination.setOnFocusChangeListener(onFocusChangeListener);
+        departure.setOnFocusChangeListener(onFocusChangeListener);
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         mCurrentMode = LocationMode.COMPASS;
@@ -124,6 +168,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         mLocClient = new LocationClient(getContext());
         mLocClient.registerLocationListener(myListener);
         LocationClientOption option = new LocationClientOption();
+        option.setIsNeedAddress(true);
         option.setOpenGps(true);
         option.setCoorType("bd09ll");
         option.setScanSpan(1000);
@@ -138,12 +183,34 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         if(requestCode == 2){
             if(resultCode == LOCATION_REQUEST){
                 Bundle bundle = data.getExtras();
-                destination.setText(bundle.getString("destination"));
-                destination.setFocusable(false);
-                destination.setFocusableInTouchMode(true);
-                //城市可以从定位那里获取
-                //mSearch.geocode(new GeoCodeOption().city("上海").address("梅赛德斯奔驰文化中心"));
-                mSearch.geocode(new GeoCodeOption().city("上海").address(destination.getText().toString()));
+                if(bundle.getString("departure").equals("") && bundle.getString("destination").equals("")){
+                    destination.setText("");
+                    destination.setFocusable(false);
+                    destination.setFocusableInTouchMode(true);
+                    departure.setVisibility(View.INVISIBLE);
+                }else if(!bundle.getString("departure").equals("") && !bundle.getString("destination").equals("")){
+                    //动态添加出发地的输入框控件
+//                    ConstraintSet cSet = new ConstraintSet();
+//                    EditText depart_new = new EditText(getContext());
+//                    depart_new.setText(bundle.getString("departure"));
+//                    layout.addView(depart_new);
+//                    cSet.clone(layout);
+//                    cSet.constrainWidth(depart_new.getId(), ConstraintLayout.layoutParams.WRAP_CONTENT);
+//                    cSet.constrainHeight(depart_new.getId(), 317);
+                    destination.setText(bundle.getString("departure"));
+                    destination.setFocusable(false);
+                    destination.setFocusableInTouchMode(true);
+
+                    departure.setVisibility(View.VISIBLE);
+                    departure.bringToFront();
+                    departure.setText(bundle.getString("destination"));
+                    departure.setFocusable(false);
+                    departure.setFocusableInTouchMode(true);
+
+                    mSearch.geocode(new GeoCodeOption().city(city).address(bundle.getString("destination")));
+                }
+                fab.show();
+
             }
         }
     }
@@ -222,14 +289,31 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                 result.getLocation().latitude,
                 result.getLocation().longitude);
 
-        Toast.makeText(getActivity(), strInfo, Toast.LENGTH_LONG).show();
+       // Toast.makeText(getActivity(), strInfo, Toast.LENGTH_LONG).show();
 
         Log.e("GeoCodeDemo", "onGetGeoCodeResult = " + result.toString());
     }
 
     @Override
-    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
+    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(getActivity(), "抱歉，未能找到结果", Toast.LENGTH_LONG).show();
+            return;
+        }
 
+//        mBaiduMap.clear();
+//        mBaiduMap.addOverlay(new MarkerOptions()
+//                .position(result.getLocation())
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_marka)));
+//
+//        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
+
+        mylocation = result.getAddress();
+        departure.setText(result.getAddress().toString());
+
+        //Toast.makeText(getActivity(), result.getAddress() + " adcode: " + result.getAdcode(), Toast.LENGTH_LONG).show();
+
+        Log.e("GeoCodeDemo", "ReverseGeoCodeResult = " + result.toString());
     }
 
     public class MyLocationListener implements BDLocationListener {
@@ -255,6 +339,9 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                 builder.target(ll).zoom(18.0f);
                 mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
             }
+
+            city = location.getCity();
+            mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(new LatLng(location.getLatitude(), location.getLongitude())));
         }
     }
 }

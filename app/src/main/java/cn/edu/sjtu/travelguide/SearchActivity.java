@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -63,17 +64,17 @@ public class SearchActivity extends QMUIFragmentActivity implements OnGetSuggest
         mSuggestionSearch = SuggestionSearch.newInstance();
         ss = SuggestionSearch.newInstance();
 
-        //searchButton = findViewById(R.id.search);
-
         departureView = (AutoCompleteTextView) findViewById(R.id.departure);
         departureSug = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line);
         departureView.setAdapter(departureSug);
         departureView.setThreshold(1);
-        
+        departureView.setText(getIntent().getStringExtra("departure"));
+
         destinationView = (AutoCompleteTextView) findViewById(R.id.searchkey);
         destinationSug = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
         destinationView.setAdapter(destinationSug);
         destinationView.setThreshold(1);
+        destinationView.setText(getIntent().getStringExtra("destination"));
 
         /* 当出发地输入关键字变化时，动态更新建议列表 */
         TextWatcher textWatcher = new TextWatcher(){
@@ -159,9 +160,9 @@ public class SearchActivity extends QMUIFragmentActivity implements OnGetSuggest
                 Toast.makeText(SearchActivity.this, "出发地输入完成", Toast.LENGTH_LONG).show();
                 hintKeyBoard();
                 if(!destinationView.getText().toString().equals("")){
+                    String d = departureView.getText().toString();
                     String s = destinationView.getText().toString();
-                    String sss = destinationView.getHint().toString();
-                    startSearch();
+                    startSearch(d, s);
                 }
             }
         });
@@ -193,8 +194,16 @@ public class SearchActivity extends QMUIFragmentActivity implements OnGetSuggest
         destinationView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String end = destinationView.getText().toString();
+                if(departureView.getText().toString().equals("")){
+                    String start = getIntent().getStringExtra("location");
+                    startSearch(start, end);
+                }else{
+                    String start = departureView.getText().toString();
+                    startSearch(start, end);
+                }
                 hintKeyBoard();
-                startSearch();
+
             }
         });
 
@@ -247,11 +256,10 @@ public class SearchActivity extends QMUIFragmentActivity implements OnGetSuggest
         }
     }
 
-    public void startSearch(){
+    public void startSearch(String depart, String dest){
         Bundle bundle = new Bundle();
-        bundle.putString("departure", "上海市闵行区上海交通大学");
-        //bundle.putString("destination", "梅赛德斯奔驰文化中心 上海市浦东新区");
-        bundle.putString("destination", destinationView.getText().toString());
+        bundle.putString("departure", depart);
+        bundle.putString("destination", dest);
         setResult(LOCATION_REQUEST, SearchActivity.this.getIntent().putExtras(bundle));
         SearchActivity.this.finish();
     }
@@ -295,4 +303,34 @@ public class SearchActivity extends QMUIFragmentActivity implements OnGetSuggest
         mSuggestionSearch.destroy();
         super.onDestroy();
     }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+    }
+
+    /*
+    当点击默认的返回按钮时的操作
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        String start = departureView.getText().toString();
+        String end = destinationView.getText().toString();
+        String mylocation = getIntent().getStringExtra("location");
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if(start.equals("") && !end.equals("")){
+                startSearch(mylocation, end);
+                return true;
+            }
+            else if(!start.equals("") && !end.equals("")){
+                startSearch(start, end);
+                return true;
+            }else startSearch("", "");
+            //else return false;
+            return true;
+        }else{
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
 }

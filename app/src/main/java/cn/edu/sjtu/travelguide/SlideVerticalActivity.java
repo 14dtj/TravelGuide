@@ -1,6 +1,21 @@
 package cn.edu.sjtu.travelguide;
 
-import java.util.List;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.graphics.Color;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
@@ -10,23 +25,15 @@ import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.model.LatLng;
-import cn.edu.sjtu.travelguide.overlayutil.BikingRouteOverlay;
-import cn.edu.sjtu.travelguide.overlayutil.DrivingRouteOverlay;
-import cn.edu.sjtu.travelguide.overlayutil.MassTransitRouteOverlay;
-import cn.edu.sjtu.travelguide.overlayutil.OverlayManager;
-import cn.edu.sjtu.travelguide.overlayutil.TransitRouteOverlay;
-import cn.edu.sjtu.travelguide.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.route.BikingRouteLine;
-import com.baidu.mapapi.search.route.BikingRoutePlanOption;
 import com.baidu.mapapi.search.route.BikingRouteResult;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
 import com.baidu.mapapi.search.route.DrivingRouteResult;
 import com.baidu.mapapi.search.route.IndoorRouteResult;
 import com.baidu.mapapi.search.route.MassTransitRouteLine;
-import com.baidu.mapapi.search.route.MassTransitRoutePlanOption;
 import com.baidu.mapapi.search.route.MassTransitRouteResult;
 import com.baidu.mapapi.search.route.OnGetRoutePlanResultListener;
 import com.baidu.mapapi.search.route.PlanNode;
@@ -38,30 +45,18 @@ import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+import java.util.List;
 
-import cn.edu.sjtu.travelguide.R;
+import cn.edu.sjtu.travelguide.overlayutil.BikingRouteOverlay;
+import cn.edu.sjtu.travelguide.overlayutil.DrivingRouteOverlay;
+import cn.edu.sjtu.travelguide.overlayutil.MassTransitRouteOverlay;
+import cn.edu.sjtu.travelguide.overlayutil.OverlayManager;
+import cn.edu.sjtu.travelguide.overlayutil.TransitRouteOverlay;
+import cn.edu.sjtu.travelguide.overlayutil.WalkingRouteOverlay;
+import cn.edu.sjtu.travelguide.util.SlidingMenuVertical;
 
-/**
- * 此demo用来展示如何进行驾车、步行、公交、骑行、跨城综合路线搜索并在地图使用RouteOverlay、TransitOverlay绘制
- * 同时展示如何进行节点浏览并弹出泡泡
- */
-public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickListener,
+public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapClickListener,
         OnGetRoutePlanResultListener {
-
     // 浏览路线节点相关
     Button mBtnPre = null; // 上一个节点
     Button mBtnNext = null; // 下一个节点
@@ -94,11 +89,11 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     Boolean button_drive = true;
     Boolean button_walk = false;
     Boolean button_transit = false;
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_route_plan);
-
+        setContentView(R.layout.activity_slide_vertical);
         CharSequence titleLable = "路线规划功能";
 
         setTitle(titleLable);
@@ -117,8 +112,42 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
         findViewById(R.id.drive).setActivated(true);
-    }
+        final TextView tv_middle = (TextView) findViewById(R.id.tv_middle);
+        final SlidingMenuVertical slidingMenuVertical = ((SlidingMenuVertical) findViewById(R.id.slidingMenu));
+        slidingMenuVertical.setDuration_max(300);
+        slidingMenuVertical.setAmbit_scroll(100);
+        slidingMenuVertical.setOnSwitchListener(new SlidingMenuVertical.OnSwitchListener() {
+            /*
+                   滑动中
+        y_now:实时view_bottom的top y, y_opened:抽屉打开时view_bootom的top y,y_closed:抽屉关闭时view_bottom的top y  top y:在屏幕中的top y坐标
+                    */
+            @Override
+            public void onSwitching(boolean isToOpen, int y_now, int y_opened, int y_closed) {
 
+                tv_middle.setBackgroundColor(Color.argb((int) (1.0f * (y_opened - y_now) / (y_opened - y_closed) * 255),
+                        Color.red(0xff3F51B5), Color.green(0xff3F51B5), Color.blue(0xff3F51B5)));
+
+                tv_middle.setTextColor(Color.argb((int) (1.0f * (y_opened - y_now) / (y_opened - y_closed) * 255),
+                        Color.red(0xffffffff), Color.green(0xffffffff), Color.blue(0xffffffff)));
+            }
+
+            @Override
+            public void onSwitched(boolean opened) {
+
+                if (opened) {
+                    tv_middle.setBackgroundColor(0xffffffff);
+                    tv_middle.setTextColor(0xff454545);
+                }
+            }
+        });
+
+//        findViewById(R.id.tv_switch).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                slidingMenuVertical.open(!slidingMenuVertical.isOpened());
+//            }
+//        });
+    }
     /**
      * 发起路线规划搜索示例
      *
@@ -137,9 +166,14 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endNodeStr);
 
         // 实际使用中请对起点终点城市进行正确的设定
-        findViewById(R.id.transit).setActivated(false);
-        findViewById(R.id.walk).setActivated(false);
-        findViewById(R.id.drive).setActivated(false);
+        if (v.getId() == R.id.fast){
+            findViewById(R.id.fast).setActivated(true);
+            findViewById(R.id.shortest).setActivated(false);
+        }
+        if (v.getId() == R.id.shortest){
+            findViewById(R.id.fast).setActivated(false);
+            findViewById(R.id.shortest).setActivated(true);
+        }
         if (v.getId() == R.id.drive) {
 //            AlertDialog alertDialog1 = new AlertDialog.Builder(this)
 //                    .setTitle("这是标题")//标题
@@ -151,7 +185,10 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             button_transit=false;
             button_walk=false;
 
-            findViewById(R.id.drive).setActivated(button_drive);
+            findViewById(R.id.drive).setActivated(true);
+            findViewById(R.id.transit).setActivated(false);
+            findViewById(R.id.walk).setActivated(false);
+
             mSearch.drivingSearch((new DrivingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 1;
@@ -159,7 +196,9 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             button_transit=!button_transit;
             button_drive=false;
             button_walk=false;
-            findViewById(R.id.transit).setActivated(button_transit);
+            findViewById(R.id.transit).setActivated(true);
+            findViewById(R.id.walk).setActivated(false);
+            findViewById(R.id.drive).setActivated(false);
             mSearch.transitSearch((new TransitRoutePlanOption())
                     .from(stNode).city("北京").to(enNode));
             nowSearchType = 2;
@@ -167,7 +206,9 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             button_walk=!button_walk;
             button_drive=false;
             button_transit=false;
-            findViewById(R.id.walk).setActivated(button_walk);
+            findViewById(R.id.walk).setActivated(true);
+            findViewById(R.id.transit).setActivated(false);
+            findViewById(R.id.drive).setActivated(false);
             mSearch.walkingSearch((new WalkingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 3;
@@ -283,7 +324,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         // 移动节点至中心
         mBaidumap.setMapStatus(MapStatusUpdateFactory.newLatLng(nodeLocation));
         // show popup
-        popupText = new TextView(RoutePlanActivity.this);
+        popupText = new TextView(SlideVerticalActivity.this);
         popupText.setBackgroundResource(R.drawable.popup);
         popupText.setTextColor(0xFF000000);
         popupText.setText(nodeTitle);
@@ -325,12 +366,12 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     @Override
     public void onGetWalkingRouteResult(WalkingRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
             // result.getSuggestAddrInfo()
-            AlertDialog.Builder builder = new AlertDialog.Builder(RoutePlanActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(SlideVerticalActivity.this);
             builder.setTitle("提示");
             builder.setMessage("检索地址有歧义，请重新设置。\n可通过getSuggestAddrInfo()接口获得建议查询信息");
             builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
@@ -350,7 +391,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             if (result.getRouteLines().size() > 1) {
                 nowResultwalk = result;
                 if (!hasShownDialogue) {
-                    MyTransitDlg myTransitDlg = new MyTransitDlg(RoutePlanActivity.this,
+                    SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
                             result.getRouteLines(),
                             RouteLineAdapter.Type.WALKING_ROUTE);
                     myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -359,10 +400,10 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
                             hasShownDialogue = false;
                         }
                     });
-                    myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                    myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
                         public void onItemClick(int position) {
                             route = nowResultwalk.getRouteLines().get(position);
-                            WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaidumap);
+                            WalkingRouteOverlay overlay = new SlideVerticalActivity.MyWalkingRouteOverlay(mBaidumap);
                             mBaidumap.setOnMarkerClickListener(overlay);
                             routeOverlay = overlay;
                             overlay.setData(nowResultwalk.getRouteLines().get(position));
@@ -377,7 +418,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             } else if (result.getRouteLines().size() == 1) {
                 // 直接显示
                 route = result.getRouteLines().get(0);
-                WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaidumap);
+                WalkingRouteOverlay overlay = new SlideVerticalActivity.MyWalkingRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
                 overlay.setData(result.getRouteLines().get(0));
@@ -397,7 +438,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     public void onGetTransitRouteResult(TransitRouteResult result) {
 
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
@@ -413,7 +454,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             if (result.getRouteLines().size() > 1) {
                 nowResultransit = result;
                 if (!hasShownDialogue) {
-                    MyTransitDlg myTransitDlg = new MyTransitDlg(RoutePlanActivity.this,
+                    SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
                             result.getRouteLines(),
                             RouteLineAdapter.Type.TRANSIT_ROUTE);
                     myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -422,11 +463,11 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
                             hasShownDialogue = false;
                         }
                     });
-                    myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                    myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
                         public void onItemClick(int position) {
 
                             route = nowResultransit.getRouteLines().get(position);
-                            TransitRouteOverlay overlay = new MyTransitRouteOverlay(mBaidumap);
+                            TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
                             mBaidumap.setOnMarkerClickListener(overlay);
                             routeOverlay = overlay;
                             overlay.setData(nowResultransit.getRouteLines().get(position));
@@ -441,7 +482,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             } else if (result.getRouteLines().size() == 1) {
                 // 直接显示
                 route = result.getRouteLines().get(0);
-                TransitRouteOverlay overlay = new MyTransitRouteOverlay(mBaidumap);
+                TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
                 overlay.setData(result.getRouteLines().get(0));
@@ -460,7 +501,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     @Override
     public void onGetMassTransitRouteResult(MassTransitRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点模糊，获取建议列表
@@ -476,7 +517,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
 
             if (!hasShownDialogue) {
                 // 列表选择
-                MyTransitDlg myTransitDlg = new MyTransitDlg(RoutePlanActivity.this,
+                SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
                         result.getRouteLines(),
                         RouteLineAdapter.Type.MASS_TRANSIT_ROUTE);
                 nowResultmass = result;
@@ -486,10 +527,10 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
                         hasShownDialogue = false;
                     }
                 });
-                myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
                     public void onItemClick(int position) {
 
-                        MyMassTransitRouteOverlay overlay = new MyMassTransitRouteOverlay(mBaidumap);
+                        SlideVerticalActivity.MyMassTransitRouteOverlay overlay = new SlideVerticalActivity.MyMassTransitRouteOverlay(mBaidumap);
                         mBaidumap.setOnMarkerClickListener(overlay);
                         routeOverlay = overlay;
                         massroute = nowResultmass.getRouteLines().get(position);
@@ -525,7 +566,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     @Override
     public void onGetDrivingRouteResult(DrivingRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
@@ -539,7 +580,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             if (result.getRouteLines().size() > 1) {
                 nowResultdrive = result;
                 if (!hasShownDialogue) {
-                    MyTransitDlg myTransitDlg = new MyTransitDlg(RoutePlanActivity.this,
+                    SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
                             result.getRouteLines(),
                             RouteLineAdapter.Type.DRIVING_ROUTE);
                     myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -548,10 +589,10 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
                             hasShownDialogue = false;
                         }
                     });
-                    myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                    myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
                         public void onItemClick(int position) {
                             route = nowResultdrive.getRouteLines().get(position);
-                            DrivingRouteOverlay overlay = new MyDrivingRouteOverlay(mBaidumap);
+                            DrivingRouteOverlay overlay = new SlideVerticalActivity.MyDrivingRouteOverlay(mBaidumap);
                             mBaidumap.setOnMarkerClickListener(overlay);
                             routeOverlay = overlay;
                             overlay.setData(nowResultdrive.getRouteLines().get(position));
@@ -565,7 +606,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
                 }
             } else if (result.getRouteLines().size() == 1) {
                 route = result.getRouteLines().get(0);
-                DrivingRouteOverlay overlay = new MyDrivingRouteOverlay(mBaidumap);
+                DrivingRouteOverlay overlay = new SlideVerticalActivity.MyDrivingRouteOverlay(mBaidumap);
                 routeOverlay = overlay;
                 mBaidumap.setOnMarkerClickListener(overlay);
                 overlay.setData(result.getRouteLines().get(0));
@@ -589,12 +630,12 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     @Override
     public void onGetBikingRouteResult(BikingRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(RoutePlanActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
             // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
             // result.getSuggestAddrInfo()
-            AlertDialog.Builder builder = new AlertDialog.Builder(RoutePlanActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(SlideVerticalActivity.this);
             builder.setTitle("提示");
             builder.setMessage("检索地址有歧义，请重新设置。\n可通过getSuggestAddrInfo()接口获得建议查询信息");
             builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
@@ -614,7 +655,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             if (result.getRouteLines().size() > 1) {
                 nowResultbike = result;
                 if (!hasShownDialogue) {
-                    MyTransitDlg myTransitDlg = new MyTransitDlg(RoutePlanActivity.this,
+                    SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
                             result.getRouteLines(),
                             RouteLineAdapter.Type.DRIVING_ROUTE);
                     myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -623,10 +664,10 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
                             hasShownDialogue = false;
                         }
                     });
-                    myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
+                    myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
                         public void onItemClick(int position) {
                             route = nowResultbike.getRouteLines().get(position);
-                            BikingRouteOverlay overlay = new MyBikingRouteOverlay(mBaidumap);
+                            BikingRouteOverlay overlay = new SlideVerticalActivity.MyBikingRouteOverlay(mBaidumap);
                             mBaidumap.setOnMarkerClickListener(overlay);
                             routeOverlay = overlay;
                             overlay.setData(nowResultbike.getRouteLines().get(position));
@@ -640,7 +681,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
                 }
             } else if (result.getRouteLines().size() == 1) {
                 route = result.getRouteLines().get(0);
-                BikingRouteOverlay overlay = new MyBikingRouteOverlay(mBaidumap);
+                BikingRouteOverlay overlay = new SlideVerticalActivity.MyBikingRouteOverlay(mBaidumap);
                 routeOverlay = overlay;
                 mBaidumap.setOnMarkerClickListener(overlay);
                 overlay.setData(result.getRouteLines().get(0));
@@ -817,7 +858,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         private ListView transitRouteList;
         private RouteLineAdapter mTransitAdapter;
 
-        OnItemInDlgClickListener onItemInDlgClickListener;
+        SlideVerticalActivity.OnItemInDlgClickListener onItemInDlgClickListener;
 
         public MyTransitDlg(Context context, int theme) {
             super(context, theme);
@@ -857,10 +898,8 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
             });
         }
 
-        public void setOnItemInDlgClickLinster(OnItemInDlgClickListener itemListener) {
+        public void setOnItemInDlgClickLinster(SlideVerticalActivity.OnItemInDlgClickListener itemListener) {
             onItemInDlgClickListener = itemListener;
         }
-
     }
 }
-

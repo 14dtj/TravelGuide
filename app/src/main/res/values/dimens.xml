@@ -25,4 +25,8 @@
     <!-- Span Utils 各种 Span 工具 -->
     <dimen name="spanUtils_column_marginBottom">35dp</dimen>
     <dimen name="spanUtils_common_textSize">16sp</dimen>
+
+    <!-- 重定义fab大小-->
+    <dimen name="design_fab_size_normal">30dp</dimen>
+    <dimen name="design_fab_image_size">30dp</dimen>
 </resources>
