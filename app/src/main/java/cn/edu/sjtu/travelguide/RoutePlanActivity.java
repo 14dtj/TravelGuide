@@ -91,7 +91,7 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
     String endNodeStr = "百度科技园";
     boolean hasShownDialogue = false;
 
-    Boolean button_drive = false;
+    Boolean button_drive = true;
     Boolean button_walk = false;
     Boolean button_transit = false;
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,10 +112,11 @@ public class RoutePlanActivity extends Activity implements BaiduMap.OnMapClickLi
         mBtnNext.setVisibility(View.INVISIBLE);
         // 地图点击事件处理
         mBaidumap.setOnMapClickListener(this);
-        System.out.println("5");
+
         // 初始化搜索模块，注册事件监听
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
+        findViewById(R.id.drive).setActivated(true);
     }
 
     /**
