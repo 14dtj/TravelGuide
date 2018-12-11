@@ -6,17 +6,16 @@
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="61dp"
-        android:layout_marginTop="5dip"
-        android:layout_marginBottom="5dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dip"
         android:orientation="horizontal"
         android:weightSum="1">
 
 
         <Button
             android:id="@+id/drive"
-            android:layout_width="61dp"
+            android:layout_width="55dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
@@ -27,7 +26,7 @@
 
         <Button
             android:id="@+id/transit"
-            android:layout_width="61dp"
+            android:layout_width="55dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
@@ -38,7 +37,7 @@
 
         <Button
             android:id="@+id/walk"
-            android:layout_width="61dp"
+            android:layout_width="55dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
@@ -48,6 +47,35 @@
             android:text="步行" />
 
     </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <Button
+            android:id="@+id/fast"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:layout_weight="0.5"
+            android:background="@drawable/route_button"
+            android:onClick="searchButtonProcess"
+            android:text="最快路线" />
+
+        <Button
+            android:id="@+id/shortest"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:layout_weight="0.5"
+            android:background="@drawable/route_button"
+            android:onClick="searchButtonProcess"
+            android:text="最短路线" />
+
+    </LinearLayout>
+
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -75,10 +103,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignWithParentIfMissing="false"
-            android:layout_alignParentBottom="true"
+
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="false"
-            android:layout_marginBottom="30dip">
+            android:layout_marginTop="10dip">
 
             <Button
                 android:id="@+id/pre"
@@ -106,8 +134,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="-60dip"
-            android:orientation="vertical">
+            android:layout_marginBottom="-150dip"
+            android:orientation="vertical"
+            android:clickable="false">
 
             <cn.edu.sjtu.travelguide.util.SlidingMenuVertical
                 android:id="@+id/slidingMenu"
@@ -133,7 +162,8 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:text="路线"
-                        android:textColor="#454545" />
+                        android:textColor="#454545"
+                        android:background="#e6e6e6"/>
 
                     <ScrollView
                         android:layout_width="match_parent"

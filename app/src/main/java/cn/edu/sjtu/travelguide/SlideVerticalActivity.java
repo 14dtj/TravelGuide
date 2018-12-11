@@ -166,9 +166,14 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endNodeStr);
 
         // 实际使用中请对起点终点城市进行正确的设定
-        findViewById(R.id.transit).setActivated(false);
-        findViewById(R.id.walk).setActivated(false);
-        findViewById(R.id.drive).setActivated(false);
+        if (v.getId() == R.id.fast){
+            findViewById(R.id.fast).setActivated(true);
+            findViewById(R.id.shortest).setActivated(false);
+        }
+        if (v.getId() == R.id.shortest){
+            findViewById(R.id.fast).setActivated(false);
+            findViewById(R.id.shortest).setActivated(true);
+        }
         if (v.getId() == R.id.drive) {
 //            AlertDialog alertDialog1 = new AlertDialog.Builder(this)
 //                    .setTitle("这是标题")//标题
@@ -180,7 +185,10 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             button_transit=false;
             button_walk=false;
 
-            findViewById(R.id.drive).setActivated(button_drive);
+            findViewById(R.id.drive).setActivated(true);
+            findViewById(R.id.transit).setActivated(false);
+            findViewById(R.id.walk).setActivated(false);
+
             mSearch.drivingSearch((new DrivingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 1;
@@ -188,7 +196,9 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             button_transit=!button_transit;
             button_drive=false;
             button_walk=false;
-            findViewById(R.id.transit).setActivated(button_transit);
+            findViewById(R.id.transit).setActivated(true);
+            findViewById(R.id.walk).setActivated(false);
+            findViewById(R.id.drive).setActivated(false);
             mSearch.transitSearch((new TransitRoutePlanOption())
                     .from(stNode).city("北京").to(enNode));
             nowSearchType = 2;
@@ -196,7 +206,9 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             button_walk=!button_walk;
             button_drive=false;
             button_transit=false;
-            findViewById(R.id.walk).setActivated(button_walk);
+            findViewById(R.id.walk).setActivated(true);
+            findViewById(R.id.transit).setActivated(false);
+            findViewById(R.id.drive).setActivated(false);
             mSearch.walkingSearch((new WalkingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 3;
