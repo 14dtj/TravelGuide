@@ -11,8 +11,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
@@ -24,8 +22,6 @@ import com.qmuiteam.qmui.arch.QMUIFragmentActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-
 /**
  * Created by wanglei on 2018/12/3.
  */
@@ -33,9 +29,6 @@ import butterknife.BindView;
 public class SearchActivity extends QMUIFragmentActivity implements OnGetSuggestionResultListener {
 
     private static final int LOCATION_REQUEST = 0;
-    
-    //@BindView(R.id.search)
-    //Button searchButton;
 
     private SuggestionSearch mSuggestionSearch = null;
     private SuggestionSearch ss = null;

@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -36,17 +35,23 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
+import org.json.JSONObject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import cn.edu.sjtu.travelguide.PublicRouteActivity;
 import cn.edu.sjtu.travelguide.R;
-import cn.edu.sjtu.travelguide.RoutePlanActivity;
 import cn.edu.sjtu.travelguide.SearchActivity;
 import cn.edu.sjtu.travelguide.SlideVerticalActivity;
+import cn.edu.sjtu.travelguide.service.AsyncTask;
+import cn.edu.sjtu.travelguide.service.WeatherService;
+import okhttp3.ResponseBody;
 
 import static android.content.Context.SENSOR_SERVICE;
 
-public class MapFragment extends BaseFragment implements SensorEventListener, OnGetGeoCoderResultListener {
+public class MapFragment extends BaseFragment implements SensorEventListener, OnGetGeoCoderResultListener, AsyncTask {
 
+    private static final String TAG = MapFragment.class.getSimpleName();
     private static final int LOCATION_REQUEST = 0;
 
     @BindView(R.id.bmapView)
@@ -64,6 +69,10 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     FloatingActionButton publicTraffic;//规划路线
     @BindView(R.id.trafficCondition)
     FloatingActionButton trafficButton;//查看交通状况
+    @BindView(R.id.weatherButton)
+    FloatingActionButton weatherButton;
+    @BindView(R.id.weatherView)
+    EditText weatherView;
 
 //    @BindView(R.id.tv1)
 //    TextView tv1;
@@ -95,6 +104,13 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     String mylocation = null;
     String city = null;
 
+    //need to be declared final
+    String weather = null;
+    String humidity = null;
+    String pm = null;
+    String quality = null;
+    String temperature = null;
+
     @Override
     protected View onCreateView() {
         layout = (ConstraintLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
@@ -105,6 +121,9 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         destination.bringToFront();
         destination.setBackgroundColor(Color.WHITE);
 
+        weatherView.setVisibility(View.INVISIBLE);
+        weatherView.setBackgroundColor(Color.WHITE);
+        weatherView.bringToFront();
 //        Typeface font = Typeface.createFromAsset(getActivity().getAssets(),"fonts/fa-solid-900.ttf");
 //        tv1.setTypeface(font);
 //        tv2.setTypeface(font);
@@ -147,6 +166,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
 
         publicTraffic.bringToFront();
         trafficButton.bringToFront();
+        weatherButton.bringToFront();
         fab.setBackgroundResource(R.drawable.bus);
         fab.bringToFront();
         fab.hide();
@@ -154,29 +174,38 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         View.OnClickListener fabListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent;
                 switch (view.getId()){
                     case R.id.publicTraffic:
-
+                        intent = new Intent(getActivity(), PublicRouteActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.trafficCondition:
                         if(mBaiduMap.isTrafficEnabled()){
                             mBaiduMap.setTrafficEnabled(false);
                             //trafficButton.setBackgroundResource(R.drawable.invisibility);
-                            trafficButton.setImageResource(R.drawable.invisibility);
+                            trafficButton.setImageResource(R.drawable.visibility_off_white);
                         }else{
                             mBaiduMap.setTrafficEnabled(true);
                             //trafficButton.setBackgroundResource(R.drawable.visibility);
-                            trafficButton.setImageResource(R.drawable.visibility);
+                            trafficButton.setImageResource(R.drawable.visibility_white);
                         }
                         break;
                     case R.id.fab:
                         String departureLocation = destination.getText().toString();//出发地
                         String destinationLocation = departure.getText().toString();//目的地
-                        Intent intent = new Intent(getActivity(), SlideVerticalActivity.class);
+                        intent = new Intent(getActivity(), SlideVerticalActivity.class);
                         intent.putExtra("departureLocation", departureLocation);
                         intent.putExtra("destinationLocation", destinationLocation);
                         startActivity(intent);
                         break;
+                    case R.id.weatherButton:
+                        if(weatherView.getVisibility() == View.VISIBLE){
+                            weatherView.setVisibility(View.INVISIBLE);
+                        }else{
+                            weatherView.setVisibility(View.VISIBLE);
+                            test();
+                        }
                     default:
                         break;
                 }
@@ -186,21 +215,8 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         fab.setOnClickListener(fabListener);
         publicTraffic.setOnClickListener(fabListener);
         trafficButton.setOnClickListener(fabListener);
+        weatherButton.setOnClickListener(fabListener);
 
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                /*
-//                这里规划路线-------TO DO
-//                 */
-//                String departureLocation = destination.getText().toString();//出发地
-//                String destinationLocation = departure.getText().toString();//目的地
-//                Intent intent = new Intent(getActivity(), RoutePlanActivity.class);
-//                intent.putExtra("departureLocation", departureLocation);
-//                intent.putExtra("destinationLocation", destinationLocation);
-//                startActivity(intent);
-//            }
-//        });
         View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -233,6 +249,8 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         mCurrentMode = LocationMode.COMPASS;
         mBaiduMap = mMapView.getMap();
 
+
+
         // 初始化搜索模块，注册事件监听
         mSearch = GeoCoder.newInstance();
         mSearch.setOnGetGeoCodeResultListener(this);
@@ -251,6 +269,12 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         return layout;
     }
 
+    public void test(){
+        //获取天气
+        WeatherService.getInstance().getWeatherCondition("101020100", this);
+    }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if(requestCode == 2){
@@ -262,14 +286,6 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                     destination.setFocusableInTouchMode(true);
                     departure.setVisibility(View.INVISIBLE);
                 }else if(!bundle.getString("departure").equals("") && !bundle.getString("destination").equals("")){
-                    //动态添加出发地的输入框控件
-//                    ConstraintSet cSet = new ConstraintSet();
-//                    EditText depart_new = new EditText(getContext());
-//                    depart_new.setText(bundle.getString("departure"));
-//                    layout.addView(depart_new);
-//                    cSet.clone(layout);
-//                    cSet.constrainWidth(depart_new.getId(), ConstraintLayout.layoutParams.WRAP_CONTENT);
-//                    cSet.constrainHeight(depart_new.getId(), 317);
                     destination.setText(bundle.getString("departure"));
                     destination.setFocusable(false);
                     destination.setFocusableInTouchMode(true);
@@ -281,6 +297,9 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                     departure.setFocusableInTouchMode(true);
 
                     mSearch.geocode(new GeoCodeOption().city(city).address(bundle.getString("destination")));
+
+                    //这里调用可能会出问题！！！！
+                    //PoiService.getInstance().addSearchRecord(bundle.getString("destination"));
                 }
                 fab.show();
 
@@ -364,7 +383,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
 
        // Toast.makeText(getActivity(), strInfo, Toast.LENGTH_LONG).show();
 
-        Log.e("GeoCodeDemo", "onGetGeoCodeResult = " + result.toString());
+        //Log.e("GeoCodeDemo", "onGetGeoCodeResult = " + result.toString());
     }
 
     @Override
@@ -386,7 +405,36 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
 
         //Toast.makeText(getActivity(), result.getAddress() + " adcode: " + result.getAdcode(), Toast.LENGTH_LONG).show();
 
-        Log.e("GeoCodeDemo", "ReverseGeoCodeResult = " + result.toString());
+        //Log.e("GeoCodeDemo", "ReverseGeoCodeResult = " + result.toString());
+    }
+
+    @Override
+    public void onSuccess(ResponseBody body) {
+
+        try{
+            weather = body.string();
+            JSONObject json = new JSONObject(weather);
+            JSONObject data = json.getJSONObject("data");
+            humidity = data.getString("shidu");
+            pm = data.get("pm25").toString();
+            quality = data.get("quality").toString();
+            temperature = data.get("wendu").toString();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                weatherView.setText("温度" + temperature);
+                //Toast.makeText(getActivity(), "yyyyyyyy"+ weather, Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    @Override
+    public void onFailure() {
+
     }
 
     public class MyLocationListener implements BDLocationListener {

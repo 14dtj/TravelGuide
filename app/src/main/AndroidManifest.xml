@@ -45,7 +45,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SearchActivity" />
-         <meta-data
+        <activity android:name=".PublicRouteActivity" />
+        <meta-data
          android:name="com.baidu.lbsapi.API_KEY"
          android:value="e9QjU7TryjGqkqoRTBZwQ9K9tEKzh6GO"/>
         <!-- <meta-data -->

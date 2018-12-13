@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "cn.edu.sjtu.travelguide"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -39,4 +39,7 @@ dependencies {
     implementation 'com.karumi:expandableselector:1.0.0'
     implementation 'com.karumi:expandableselector:1.0.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile 'com.carson_ho:SearchLayout:1.0.1'
+    //compile 'net.sf.json-lib:json-lib:2.4:jdk15'
+
 }
