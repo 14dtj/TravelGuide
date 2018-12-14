@@ -175,16 +175,6 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             findViewById(R.id.shortest).setActivated(true);
         }
         if (v.getId() == R.id.drive) {
-//            AlertDialog alertDialog1 = new AlertDialog.Builder(this)
-//                    .setTitle("这是标题")//标题
-//                    .setMessage("这是内容")//内容
-//                    .setIcon(R.mipmap.ic_launcher)//图标
-//                    .create();
-//            alertDialog1.show();
-            button_drive=!button_drive;
-            button_transit=false;
-            button_walk=false;
-
             findViewById(R.id.drive).setActivated(true);
             findViewById(R.id.transit).setActivated(false);
             findViewById(R.id.walk).setActivated(false);
@@ -193,9 +183,6 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
                     .from(stNode).to(enNode));
             nowSearchType = 1;
         } else if (v.getId() == R.id.transit) {
-            button_transit=!button_transit;
-            button_drive=false;
-            button_walk=false;
             findViewById(R.id.transit).setActivated(true);
             findViewById(R.id.walk).setActivated(false);
             findViewById(R.id.drive).setActivated(false);
@@ -203,9 +190,6 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
                     .from(stNode).city("北京").to(enNode));
             nowSearchType = 2;
         } else if (v.getId() == R.id.walk) {
-            button_walk=!button_walk;
-            button_drive=false;
-            button_transit=false;
             findViewById(R.id.walk).setActivated(true);
             findViewById(R.id.transit).setActivated(false);
             findViewById(R.id.drive).setActivated(false);

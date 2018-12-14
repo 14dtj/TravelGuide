@@ -13,38 +13,48 @@
         android:weightSum="1">
 
 
-        <Button
+        <cn.edu.sjtu.travelguide.util.DrawableCenterButton
             android:id="@+id/drive"
-            android:layout_width="55dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
             android:layout_weight="0.33"
             android:background="@drawable/route_button"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:drawablePadding="5dp"
+            android:drawableLeft="@drawable/ic_directions_car_black_24dp"
             android:onClick="searchButtonProcess"
             android:text="驾车" />
 
-        <Button
+        <cn.edu.sjtu.travelguide.util.DrawableCenterButton
             android:id="@+id/transit"
-            android:layout_width="55dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
             android:layout_weight="0.33"
             android:background="@drawable/route_button"
             android:onClick="searchButtonProcess"
-            android:text="公交" />
+            android:text="公交"
+            android:gravity="center_vertical"
+            android:drawablePadding="5dp"
+            android:drawableLeft="@drawable/ic_directions_bus_black_24dp"/>
 
-        <Button
+        <cn.edu.sjtu.travelguide.util.DrawableCenterButton
             android:id="@+id/walk"
-            android:layout_width="55dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
             android:layout_weight="0.33"
             android:background="@drawable/route_button"
             android:onClick="searchButtonProcess"
-            android:text="步行" />
+            android:text="步行"
+            android:gravity="center_vertical"
+            android:drawablePadding="5dp"
+            android:drawableLeft="@drawable/ic_directions_walk_black_24dp"/>
 
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -59,9 +69,11 @@
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
             android:layout_weight="0.5"
-            android:background="@drawable/route_button"
             android:onClick="searchButtonProcess"
-            android:text="最快路线" />
+            android:text="最快路线"
+            android:textColor="@drawable/btn_click_text_color"
+            android:background="@color/transparent"
+            />
 
         <Button
             android:id="@+id/shortest"
@@ -70,9 +82,10 @@
             android:layout_marginLeft="2dip"
             android:layout_marginRight="2dip"
             android:layout_weight="0.5"
-            android:background="@drawable/route_button"
             android:onClick="searchButtonProcess"
-            android:text="最短路线" />
+            android:textColor="@drawable/btn_click_text_color"
+            android:text="最短路线"
+            android:background="@color/transparent"/>
 
     </LinearLayout>
 
@@ -111,7 +124,7 @@
             <Button
                 android:id="@+id/pre"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="40dp"
                 android:layout_marginLeft="2dip"
                 android:layout_marginRight="2dip"
                 android:layout_weight="1.0"
@@ -121,7 +134,7 @@
             <Button
                 android:id="@+id/next"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="40dp"
                 android:layout_marginLeft="2dip"
                 android:layout_marginRight="2dip"
                 android:layout_weight="1.0"
