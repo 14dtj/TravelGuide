@@ -2,20 +2,14 @@ package cn.edu.sjtu.travelguide;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -43,9 +37,6 @@ import com.baidu.mapapi.search.route.TransitRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
-
-import java.util.List;
-
 import cn.edu.sjtu.travelguide.overlayutil.BikingRouteOverlay;
 import cn.edu.sjtu.travelguide.overlayutil.DrivingRouteOverlay;
 import cn.edu.sjtu.travelguide.overlayutil.MassTransitRouteOverlay;
@@ -65,7 +56,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     OverlayManager routeOverlay = null;
     boolean useDefaultIcon = false;
     private TextView popupText = null; // 泡泡view
-
+    TextView routeText = null;
     // 地图相关，使用继承MapView的MyRouteMapView目的是重写touch事件实现泡泡处理
     // 如果不处理touch事件，则无需继承，直接使用MapView即可
     MapView mMapView = null;    // 地图View
@@ -81,11 +72,11 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
     int nowSearchType = -1; // 当前进行的检索，供判断浏览节点时结果使用。
 
-    String startNodeStr = "西二旗地铁站";
-    String endNodeStr = "百度科技园";
+    String startNodeStr = "上海交通大学（闵行校区）";
+    String endNodeStr = "上海交通大学（徐汇校区）";
     boolean hasShownDialogue = false;
-
-
+    String fastOrShort="fast";
+    String howtogo="drive";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_vertical);
@@ -108,6 +99,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         mSearch.setOnGetRoutePlanResultListener(this);
         findViewById(R.id.drive).setActivated(true);
         findViewById(R.id.fast).setActivated(true);
+        routeText = findViewById(R.id.routeContent);
         final TextView tv_middle = (TextView) findViewById(R.id.tv_middle);
         final SlidingMenuVertical slidingMenuVertical = ((SlidingMenuVertical) findViewById(R.id.slidingMenu));
         slidingMenuVertical.setDuration_max(300);
@@ -137,7 +129,13 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             }
         });
 
+        //点击驾车最快按钮
+        findViewById(R.id.drive).performClick();
 
+    }
+
+    public void backProcess(View v) {
+        finish();
     }
 
     /**
@@ -147,44 +145,58 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
      */
     public void searchButtonProcess(View v) {
 
-        // 重置浏览节点的路线数据
-        route = null;
-        mBtnPre.setVisibility(View.INVISIBLE);
-        mBtnNext.setVisibility(View.INVISIBLE);
-        mBaidumap.clear();
-        // 处理搜索按钮响应
-        // 设置起终点信息，对于tranist search 来说，城市名无意义
-        PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京", startNodeStr);
-        PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endNodeStr);
+
 
         // 实际使用中请对起点终点城市进行正确的设定
         if (v.getId() == R.id.fast) {
             findViewById(R.id.fast).setActivated(true);
             findViewById(R.id.shortest).setActivated(false);
+            fastOrShort="fast";
         }
-        if (v.getId() == R.id.shortest) {
+        else if (v.getId() == R.id.shortest) {
             findViewById(R.id.fast).setActivated(false);
             findViewById(R.id.shortest).setActivated(true);
+            fastOrShort="short";
         }
+        else {
+            // 重置浏览节点的路线数据
+            route = null;
+            mBtnPre.setVisibility(View.INVISIBLE);
+            mBtnNext.setVisibility(View.INVISIBLE);
+            mBaidumap.clear();
+        }
+        // 处理搜索按钮响应
+        // 设置起终点信息，对于tranist search 来说，城市名无意义
+        PlanNode stNode = PlanNode.withCityNameAndPlaceName("上海", startNodeStr);
+        PlanNode enNode = PlanNode.withCityNameAndPlaceName("上海", endNodeStr);
+
+
         if (v.getId() == R.id.drive) {
+            howtogo="drive";
             findViewById(R.id.drive).setActivated(true);
             findViewById(R.id.transit).setActivated(false);
             findViewById(R.id.walk).setActivated(false);
-
-            mSearch.drivingSearch((new DrivingRoutePlanOption())
-                    .from(stNode).to(enNode));
-            nowSearchType = 1;
         } else if (v.getId() == R.id.transit) {
+            howtogo="transit";
             findViewById(R.id.transit).setActivated(true);
             findViewById(R.id.walk).setActivated(false);
             findViewById(R.id.drive).setActivated(false);
-            mSearch.transitSearch((new TransitRoutePlanOption())
-                    .from(stNode).city("北京").to(enNode));
-            nowSearchType = 2;
         } else if (v.getId() == R.id.walk) {
+            howtogo="walk";
             findViewById(R.id.walk).setActivated(true);
             findViewById(R.id.transit).setActivated(false);
             findViewById(R.id.drive).setActivated(false);
+        }
+
+        if(howtogo.equals("drive")){
+            mSearch.drivingSearch((new DrivingRoutePlanOption())
+                    .from(stNode).to(enNode));
+            nowSearchType = 1;
+        }else if(howtogo.equals("transit")){
+            mSearch.transitSearch((new TransitRoutePlanOption())
+                    .from(stNode).city("上海").to(enNode));
+            nowSearchType = 2;
+        }else{
             mSearch.walkingSearch((new WalkingRoutePlanOption())
                     .from(stNode).to(enNode));
             nowSearchType = 3;
@@ -461,6 +473,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     }
 
 
+
     @Override
     public void onGetDrivingRouteResult(DrivingRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
@@ -476,6 +489,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             mBtnPre.setVisibility(View.VISIBLE);
             mBtnNext.setVisibility(View.VISIBLE);
             if (result.getRouteLines().size() > 1) {
+                routeText.setText(result.getRouteLines().size()+"");
                 nowResultdrive = result;
                 route = nowResultdrive.getRouteLines().get(0);
                 DrivingRouteOverlay overlay = new SlideVerticalActivity.MyDrivingRouteOverlay(mBaidumap);
