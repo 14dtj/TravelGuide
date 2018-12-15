@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.util.Log;
@@ -86,10 +85,6 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     String endNodeStr = "百度科技园";
     boolean hasShownDialogue = false;
 
-    Boolean button_drive = true;
-    Boolean button_walk = false;
-    Boolean button_transit = false;
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +107,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         mSearch = RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
         findViewById(R.id.drive).setActivated(true);
+        findViewById(R.id.fast).setActivated(true);
         final TextView tv_middle = (TextView) findViewById(R.id.tv_middle);
         final SlidingMenuVertical slidingMenuVertical = ((SlidingMenuVertical) findViewById(R.id.slidingMenu));
         slidingMenuVertical.setDuration_max(300);
@@ -141,13 +137,9 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             }
         });
 
-//        findViewById(R.id.tv_switch).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                slidingMenuVertical.open(!slidingMenuVertical.isOpened());
-//            }
-//        });
+
     }
+
     /**
      * 发起路线规划搜索示例
      *
@@ -166,11 +158,11 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endNodeStr);
 
         // 实际使用中请对起点终点城市进行正确的设定
-        if (v.getId() == R.id.fast){
+        if (v.getId() == R.id.fast) {
             findViewById(R.id.fast).setActivated(true);
             findViewById(R.id.shortest).setActivated(false);
         }
-        if (v.getId() == R.id.shortest){
+        if (v.getId() == R.id.shortest) {
             findViewById(R.id.fast).setActivated(false);
             findViewById(R.id.shortest).setActivated(true);
         }
@@ -315,32 +307,6 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         mBaidumap.showInfoWindow(new InfoWindow(popupText, nodeLocation, 0));
     }
 
-    /**
-     * 切换路线图标，刷新地图使其生效
-     * 注意： 起终点图标使用中心对齐.
-     */
-    public void changeRouteIcon(View v) {
-        if (routeOverlay == null) {
-            return;
-        }
-        if (useDefaultIcon) {
-            ((Button) v).setText("自定义起终点图标");
-            Toast.makeText(this,
-                    "将使用系统起终点图标",
-                    Toast.LENGTH_SHORT).show();
-
-        } else {
-            ((Button) v).setText("系统起终点图标");
-            Toast.makeText(this,
-                    "将使用自定义起终点图标",
-                    Toast.LENGTH_SHORT).show();
-
-        }
-        useDefaultIcon = !useDefaultIcon;
-        routeOverlay.removeFromMap();
-        routeOverlay.addToMap();
-    }
-
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -374,31 +340,17 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
             if (result.getRouteLines().size() > 1) {
                 nowResultwalk = result;
-                if (!hasShownDialogue) {
-                    SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
-                            result.getRouteLines(),
-                            RouteLineAdapter.Type.WALKING_ROUTE);
-                    myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            hasShownDialogue = false;
-                        }
-                    });
-                    myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
-                        public void onItemClick(int position) {
-                            route = nowResultwalk.getRouteLines().get(position);
-                            WalkingRouteOverlay overlay = new SlideVerticalActivity.MyWalkingRouteOverlay(mBaidumap);
-                            mBaidumap.setOnMarkerClickListener(overlay);
-                            routeOverlay = overlay;
-                            overlay.setData(nowResultwalk.getRouteLines().get(position));
-                            overlay.addToMap();
-                            overlay.zoomToSpan();
-                        }
 
-                    });
-                    myTransitDlg.show();
-                    hasShownDialogue = true;
-                }
+
+                route = nowResultwalk.getRouteLines().get(0);
+                WalkingRouteOverlay overlay = new SlideVerticalActivity.MyWalkingRouteOverlay(mBaidumap);
+                mBaidumap.setOnMarkerClickListener(overlay);
+                routeOverlay = overlay;
+                overlay.setData(nowResultwalk.getRouteLines().get(0));
+                overlay.addToMap();
+                overlay.zoomToSpan();
+
+
             } else if (result.getRouteLines().size() == 1) {
                 // 直接显示
                 route = result.getRouteLines().get(0);
@@ -437,32 +389,17 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
             if (result.getRouteLines().size() > 1) {
                 nowResultransit = result;
-                if (!hasShownDialogue) {
-                    SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
-                            result.getRouteLines(),
-                            RouteLineAdapter.Type.TRANSIT_ROUTE);
-                    myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            hasShownDialogue = false;
-                        }
-                    });
-                    myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
-                        public void onItemClick(int position) {
 
-                            route = nowResultransit.getRouteLines().get(position);
-                            TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
-                            mBaidumap.setOnMarkerClickListener(overlay);
-                            routeOverlay = overlay;
-                            overlay.setData(nowResultransit.getRouteLines().get(position));
-                            overlay.addToMap();
-                            overlay.zoomToSpan();
-                        }
 
-                    });
-                    myTransitDlg.show();
-                    hasShownDialogue = true;
-                }
+                route = nowResultransit.getRouteLines().get(0);
+                TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
+                mBaidumap.setOnMarkerClickListener(overlay);
+                routeOverlay = overlay;
+                overlay.setData(nowResultransit.getRouteLines().get(0));
+                overlay.addToMap();
+                overlay.zoomToSpan();
+
+
             } else if (result.getRouteLines().size() == 1) {
                 // 直接显示
                 route = result.getRouteLines().get(0);
@@ -499,51 +436,28 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             mBtnPre.setVisibility(View.VISIBLE);
             mBtnNext.setVisibility(View.VISIBLE);
 
-            if (!hasShownDialogue) {
-                // 列表选择
-                SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
-                        result.getRouteLines(),
-                        RouteLineAdapter.Type.MASS_TRANSIT_ROUTE);
-                nowResultmass = result;
-                myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        hasShownDialogue = false;
-                    }
-                });
-                myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
-                    public void onItemClick(int position) {
+            SlideVerticalActivity.MyMassTransitRouteOverlay overlay = new SlideVerticalActivity.MyMassTransitRouteOverlay(mBaidumap);
+            mBaidumap.setOnMarkerClickListener(overlay);
+            routeOverlay = overlay;
+            massroute = nowResultmass.getRouteLines().get(0);
+            overlay.setData(nowResultmass.getRouteLines().get(0));
 
-                        SlideVerticalActivity.MyMassTransitRouteOverlay overlay = new SlideVerticalActivity.MyMassTransitRouteOverlay(mBaidumap);
-                        mBaidumap.setOnMarkerClickListener(overlay);
-                        routeOverlay = overlay;
-                        massroute = nowResultmass.getRouteLines().get(position);
-                        overlay.setData(nowResultmass.getRouteLines().get(position));
+            MassTransitRouteLine line = nowResultmass.getRouteLines().get(0);
+            overlay.setData(line);
+            if (nowResultmass.getOrigin().getCityId() == nowResultmass.getDestination().getCityId()) {
+                // 同城
+                overlay.setSameCity(true);
+            } else {
+                // 跨城
+                overlay.setSameCity(false);
 
-                        MassTransitRouteLine line = nowResultmass.getRouteLines().get(position);
-                        overlay.setData(line);
-                        if (nowResultmass.getOrigin().getCityId() == nowResultmass.getDestination().getCityId()) {
-                            // 同城
-                            overlay.setSameCity(true);
-                        } else {
-                            // 跨城
-                            overlay.setSameCity(false);
-
-                        }
-                        mBaidumap.clear();
-                        overlay.addToMap();
-                        overlay.zoomToSpan();
-                    }
-
-                });
-
-                /* 防止多次进入退出，Activity已经释放，但是Dialog仍然弹出，导致的异常释放崩溃 */
-                if (!isFinishing()) {
-                    myTransitDlg.show();
-                    hasShownDialogue = true;
-                }
             }
+            mBaidumap.clear();
+            overlay.addToMap();
+            overlay.zoomToSpan();
         }
+
+
     }
 
 
@@ -559,35 +473,18 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
             nodeIndex = -1;
-
-
+            mBtnPre.setVisibility(View.VISIBLE);
+            mBtnNext.setVisibility(View.VISIBLE);
             if (result.getRouteLines().size() > 1) {
                 nowResultdrive = result;
-                if (!hasShownDialogue) {
-                    SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
-                            result.getRouteLines(),
-                            RouteLineAdapter.Type.DRIVING_ROUTE);
-                    myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            hasShownDialogue = false;
-                        }
-                    });
-                    myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
-                        public void onItemClick(int position) {
-                            route = nowResultdrive.getRouteLines().get(position);
-                            DrivingRouteOverlay overlay = new SlideVerticalActivity.MyDrivingRouteOverlay(mBaidumap);
-                            mBaidumap.setOnMarkerClickListener(overlay);
-                            routeOverlay = overlay;
-                            overlay.setData(nowResultdrive.getRouteLines().get(position));
-                            overlay.addToMap();
-                            overlay.zoomToSpan();
-                        }
+                route = nowResultdrive.getRouteLines().get(0);
+                DrivingRouteOverlay overlay = new SlideVerticalActivity.MyDrivingRouteOverlay(mBaidumap);
+                mBaidumap.setOnMarkerClickListener(overlay);
+                routeOverlay = overlay;
+                overlay.setData(nowResultdrive.getRouteLines().get(0));
+                overlay.addToMap();
+                overlay.zoomToSpan();
 
-                    });
-                    myTransitDlg.show();
-                    hasShownDialogue = true;
-                }
             } else if (result.getRouteLines().size() == 1) {
                 route = result.getRouteLines().get(0);
                 DrivingRouteOverlay overlay = new SlideVerticalActivity.MyDrivingRouteOverlay(mBaidumap);
@@ -638,31 +535,14 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
             if (result.getRouteLines().size() > 1) {
                 nowResultbike = result;
-                if (!hasShownDialogue) {
-                    SlideVerticalActivity.MyTransitDlg myTransitDlg = new SlideVerticalActivity.MyTransitDlg(SlideVerticalActivity.this,
-                            result.getRouteLines(),
-                            RouteLineAdapter.Type.DRIVING_ROUTE);
-                    myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            hasShownDialogue = false;
-                        }
-                    });
-                    myTransitDlg.setOnItemInDlgClickLinster(new SlideVerticalActivity.OnItemInDlgClickListener() {
-                        public void onItemClick(int position) {
-                            route = nowResultbike.getRouteLines().get(position);
-                            BikingRouteOverlay overlay = new SlideVerticalActivity.MyBikingRouteOverlay(mBaidumap);
-                            mBaidumap.setOnMarkerClickListener(overlay);
-                            routeOverlay = overlay;
-                            overlay.setData(nowResultbike.getRouteLines().get(position));
-                            overlay.addToMap();
-                            overlay.zoomToSpan();
-                        }
+                route = nowResultbike.getRouteLines().get(0);
+                BikingRouteOverlay overlay = new SlideVerticalActivity.MyBikingRouteOverlay(mBaidumap);
+                mBaidumap.setOnMarkerClickListener(overlay);
+                routeOverlay = overlay;
+                overlay.setData(nowResultbike.getRouteLines().get(0));
+                overlay.addToMap();
+                overlay.zoomToSpan();
 
-                    });
-                    myTransitDlg.show();
-                    hasShownDialogue = true;
-                }
             } else if (result.getRouteLines().size() == 1) {
                 route = result.getRouteLines().get(0);
                 BikingRouteOverlay overlay = new SlideVerticalActivity.MyBikingRouteOverlay(mBaidumap);
@@ -830,60 +710,5 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         super.onDestroy();
     }
 
-    // 响应DLg中的List item 点击
-    interface OnItemInDlgClickListener {
-        public void onItemClick(int position);
-    }
 
-    // 供路线选择的Dialog
-    class MyTransitDlg extends Dialog {
-
-        private List<? extends RouteLine> mtransitRouteLines;
-        private ListView transitRouteList;
-        private RouteLineAdapter mTransitAdapter;
-
-        SlideVerticalActivity.OnItemInDlgClickListener onItemInDlgClickListener;
-
-        public MyTransitDlg(Context context, int theme) {
-            super(context, theme);
-        }
-
-        public MyTransitDlg(Context context, List<? extends RouteLine> transitRouteLines, RouteLineAdapter.Type
-                type) {
-            this(context, 0);
-            mtransitRouteLines = transitRouteLines;
-            mTransitAdapter = new RouteLineAdapter(context, mtransitRouteLines, type);
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-        }
-
-        @Override
-        public void setOnDismissListener(OnDismissListener listener) {
-            super.setOnDismissListener(listener);
-        }
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_transit_dialog);
-
-            transitRouteList = (ListView) findViewById(R.id.transitList);
-            transitRouteList.setAdapter(mTransitAdapter);
-
-            transitRouteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    onItemInDlgClickListener.onItemClick(position);
-                    mBtnPre.setVisibility(View.VISIBLE);
-                    mBtnNext.setVisibility(View.VISIBLE);
-                    dismiss();
-                    hasShownDialogue = false;
-                }
-            });
-        }
-
-        public void setOnItemInDlgClickLinster(SlideVerticalActivity.OnItemInDlgClickListener itemListener) {
-            onItemInDlgClickListener = itemListener;
-        }
-    }
 }
