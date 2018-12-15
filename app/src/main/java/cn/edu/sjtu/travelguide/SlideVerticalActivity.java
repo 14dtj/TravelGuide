@@ -489,7 +489,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             mBtnPre.setVisibility(View.VISIBLE);
             mBtnNext.setVisibility(View.VISIBLE);
             if (result.getRouteLines().size() > 1) {
-                routeText.setText(result.getRouteLines().size()+"");
+//                routeText.setText(result.getRouteLines().size()+"");
                 nowResultdrive = result;
                 route = nowResultdrive.getRouteLines().get(0);
                 DrivingRouteOverlay overlay = new SlideVerticalActivity.MyDrivingRouteOverlay(mBaidumap);
