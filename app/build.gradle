@@ -38,8 +38,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'com.karumi:expandableselector:1.0.0'
     implementation 'com.karumi:expandableselector:1.0.0'
-    compile 'com.getbase:floatingactionbutton:1.10.1'
-    compile 'com.carson_ho:SearchLayout:1.0.1'
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
+    implementation 'com.carson_ho:SearchLayout:1.0.1'
     //compile 'net.sf.json-lib:json-lib:2.4:jdk15'
 
 }

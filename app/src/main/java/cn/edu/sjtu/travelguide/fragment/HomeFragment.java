@@ -16,6 +16,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.sjtu.travelguide.MainActivity;
+import cn.edu.sjtu.travelguide.MyApplication;
 import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.adapter.BaseFragmentPagerAdapter;
 
@@ -60,25 +61,31 @@ public class HomeFragment extends BaseFragment {
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_component_selected),
                 "地图", false
         );
-
-        QMUITabSegment.Tab util = new QMUITabSegment.Tab(
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util),
-                ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected),
-                "推荐", false
-        );
         QMUITabSegment.Tab lab = new QMUITabSegment.Tab(
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab),
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected),
                 "我的", false
         );
-        mTabSegment.addTab(component)
-                .addTab(util)
-                .addTab(lab);
+        if (MyApplication.getUser() != null && MyApplication.getUser().getRole() == 1) {
+            QMUITabSegment.Tab util = new QMUITabSegment.Tab(
+                    ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util),
+                    ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_util_selected),
+                    "推荐", false
+            );
+            mTabSegment.addTab(component)
+                    .addTab(util)
+                    .addTab(lab);
+        } else {
+            mTabSegment.addTab(component)
+                    .addTab(lab);
+        }
     }
 
     private void initPagers() {
         fragments.add(mapFragment);
-        fragments.add(recommendFragment);
+        if (MyApplication.getUser() != null && MyApplication.getUser().getRole() == 1) {
+            fragments.add(recommendFragment);
+        }
         fragments.add(myFragment);
         adapter = new BaseFragmentPagerAdapter(context.getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(adapter);

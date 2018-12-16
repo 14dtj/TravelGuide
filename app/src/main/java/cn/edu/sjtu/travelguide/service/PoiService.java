@@ -42,7 +42,7 @@ public class PoiService {
     }
 
     /**
-     * 根据关键词获得相关poi
+     * 用户添加搜索记录
      *
      * @param keyword
      */
