@@ -31,11 +31,14 @@ public class MyApplication extends Application implements AsyncTask {
         SDKInitializer.setCoordType(CoordType.BD09LL);
         //自动登录
         SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-        if (sp != null) {
-            String username = sp.getString("username", "");
-            String password = sp.getString("password", "0");
+        String username = sp.getString("username", null);
+        String password = sp.getString("password", null);
+        int role = sp.getInt("role", -1);
+        if (username != null && password != null && role != -1) {
+            user = new User(username, password, role);
             RMPService.getInstance().login(username, password, this);
         }
+
     }
 
     public static User getUser() {

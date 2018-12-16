@@ -15,6 +15,7 @@ import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.sjtu.travelguide.MainActivity;
+import cn.edu.sjtu.travelguide.MyApplication;
 import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.service.AsyncTask;
 import cn.edu.sjtu.travelguide.service.RMPService;
@@ -91,6 +92,7 @@ public class LoginFragment extends BaseFragment implements AsyncTask {
                     sp.edit()
                             .putString("username", usernameStr)
                             .putString("password", passwordStr)
+                            .putInt("role", MyApplication.getUser().getRole())
                             .apply();
                 }
                 context.change2Home();
