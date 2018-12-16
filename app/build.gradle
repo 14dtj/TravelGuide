@@ -40,6 +40,6 @@ dependencies {
     implementation 'com.karumi:expandableselector:1.0.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.carson_ho:SearchLayout:1.0.1'
-    //compile 'net.sf.json-lib:json-lib:2.4:jdk15'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
 
 }

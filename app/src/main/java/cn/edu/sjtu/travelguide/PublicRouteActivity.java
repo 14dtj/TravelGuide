@@ -1,9 +1,23 @@
 package cn.edu.sjtu.travelguide;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 //import android.widget.SearchView;
 import android.support.v7.widget.SearchView;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.mapapi.model.LatLng;
@@ -40,6 +54,8 @@ public class PublicRouteActivity extends QMUIFragmentActivity implements OnGetPo
     private List<String> busLineIDList = null;
     private List<String> buslineList = null;
 
+    MyAdapter mAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -70,6 +86,15 @@ public class PublicRouteActivity extends QMUIFragmentActivity implements OnGetPo
                 return false;
             }
         });
+
+//        RecyclerView mRecyclerView = findViewById(R.id.stationView);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        mRecyclerView.setLayoutManager(layoutManager);
+//
+//        mAdapter = new MyAdapter();
+//        mRecyclerView.setAdapter(mAdapter);
+//        mRecyclerView.addItemDecoration(new StationItemDecoration(getApplicationContext()));
     }
 
     @Override
@@ -89,6 +114,15 @@ public class PublicRouteActivity extends QMUIFragmentActivity implements OnGetPo
         for(BusLineResult.BusStation b: bs){
             buslineList.add(b.getTitle());
         }
+
+        RecyclerView mRecyclerView = findViewById(R.id.stationView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        mAdapter = new MyAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addItemDecoration(new StationItemDecoration(getApplicationContext()));
 
         Toast.makeText(this, "得到了"+result.getBusLineName(),
                 Toast.LENGTH_SHORT).show();
@@ -129,5 +163,107 @@ public class PublicRouteActivity extends QMUIFragmentActivity implements OnGetPo
     @Override
     public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
 
+    }
+
+    /*
+   当点击默认的返回按钮时的操作
+    */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            return true;
+        }else{
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    private class MyAdapter extends RecyclerView.Adapter<MyVH>{
+
+        @NonNull
+        @Override
+        public MyVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
+            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.station_item, parent, false);
+            return new MyVH(v);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull MyVH holder, int position){
+            holder.tv.setText(buslineList.get(position));
+        }
+        @Override
+        public int getItemCount(){
+            return buslineList.size();
+        }
+    }
+
+    private class MyVH extends android.support.v7.widget.RecyclerView.ViewHolder{
+
+        public TextView tv;
+
+        public MyVH(View view){
+            super(view);
+            tv = view.findViewById(R.id.stationItem);
+        }
+
+    }
+
+    private class StationItemDecoration extends android.support.v7.widget.RecyclerView.ItemDecoration{
+        private Paint mPaint; //绘制线
+        private Paint mPaint1;//绘制圆圈
+        private float radius;
+        // 左 上偏移长度
+        private int itemView_leftinterval;
+        private int itemView_topinterval;
+        public StationItemDecoration(Context context){
+            mPaint = new Paint();
+            mPaint.setAntiAlias(true);
+            mPaint.setStrokeWidth(2); //时间轴线的宽度。
+            mPaint.setColor(Color.GRAY); //时间轴线的颜色
+
+            mPaint1 = new Paint();
+            mPaint1.setColor(Color.GRAY);
+            radius = 10.0f;
+            // 赋值ItemView的左偏移长度为200
+            itemView_leftinterval = 0;
+
+            // 赋值ItemView的上偏移长度为50
+            itemView_topinterval = 0;
+
+        }
+        // 重写getItemOffsets（）方法
+        // 作用：设置ItemView 左 & 上偏移长度
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+
+            // 设置ItemView的左 & 上偏移长度分别为150 px & 30px,即此为onDraw()可绘制的区域
+            outRect.set(itemView_leftinterval, itemView_topinterval, 0, 0);
+
+        }
+
+
+        @Override
+        public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state){
+            super.onDraw(c, parent, state);
+
+            int childCount = parent.getChildCount();
+            for(int i = 0; i < childCount ; i++){
+                View view = parent.getChildAt(i);
+
+                float left = dip2px(getApplicationContext(), 14 + 10);
+                //float bottom = view.getBottom()-dip2px(getApplicationContext(), 300);
+                float bottom = view.getBottom();
+                c.drawLine(left, dip2px(getApplicationContext(), (50 - 20) / 2), left, bottom, mPaint);
+
+                float x = view.getLeft();
+                float y = view.getTop()+dip2px(getApplicationContext(),10);
+                c.drawCircle(left, y, radius, mPaint1);
+            }
+        }
+    }
+
+    public static int dip2px(Context context, float dpValue) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 }
