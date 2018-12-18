@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindView;
 import cn.edu.sjtu.travelguide.overlayutil.BikingRouteOverlay;
 import cn.edu.sjtu.travelguide.overlayutil.DrivingRouteOverlay;
 import cn.edu.sjtu.travelguide.overlayutil.MassTransitRouteOverlay;
@@ -54,6 +56,8 @@ import cn.edu.sjtu.travelguide.util.SlidingMenuVertical;
 
 public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapClickListener,
         OnGetRoutePlanResultListener {
+
+    FloatingActionButton routeDetail;
     // 浏览路线节点相关
     Button mBtnPre = null; // 上一个节点
     Button mBtnNext = null; // 下一个节点
@@ -94,7 +98,8 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         Intent intent = getIntent();
 //        startNodeStr=intent.getStringExtra("departureLocation");
 //        endNodeStr =intent.getStringExtra("destinationLocation");
-
+        routeDetail=findViewById(R.id.routeDetail);
+        routeDetail.bringToFront();
 
         // 初始化地图
         mMapView = (MapView) findViewById(R.id.map);
@@ -140,6 +145,15 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
                 }
             }
         });
+        View.OnClickListener routeDetailListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SlideVerticalActivity.this, StepActivity.class);
+                        startActivity(intent);
+            }
+        };
+
+        routeDetail.setOnClickListener(routeDetailListener);
 
         //点击驾车最快按钮
         findViewById(R.id.drive).performClick();
