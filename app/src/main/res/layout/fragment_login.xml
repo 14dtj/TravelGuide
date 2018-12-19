@@ -48,7 +48,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_title"
                 android:layout_marginTop="40dp"
-                android:background="@drawable/rectangle_edittext">
+                android:background="@drawable/rectangle_edittext"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
 
                 <ImageView
                     android:id="@+id/iv_userIconName"
@@ -101,7 +103,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/rl_userName"
                 android:layout_marginTop="1dp"
-                android:background="@drawable/rectangle_edittext">
+                android:background="@drawable/rectangle_edittext"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
 
                 <ImageView
                     android:id="@+id/iv_userIconPwd"
