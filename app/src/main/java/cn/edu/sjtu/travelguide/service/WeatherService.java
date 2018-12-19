@@ -61,8 +61,6 @@ public class WeatherService {
                     task.onFailure();
                 } else {
                     String jsonStr = body.toString();
-                    Log.v(TAG, jsonStr);
-                    Log.d(TAG, jsonStr);
                     task.onSuccess(body);
                 }
             }

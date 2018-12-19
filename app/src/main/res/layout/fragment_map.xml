@@ -8,21 +8,19 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context=".MainActivity">
-    <!--<FrameLayout-->
-    <!--android:id="@+id/fragment"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="100dp">-->
-    <!--</FrameLayout>-->
 
     <EditText
         android:id="@+id/departure"
         android:layout_width="317dp"
-        android:layout_height="wrap_content"
+        android:layout_height="36dip"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:focusableInTouchMode="true"
         android:hint="目的地"
         android:inputType="text"
+        android:background="@drawable/bg_edittext"
+        android:drawableLeft="@drawable/search_ali"
+        android:drawablePadding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,13 +29,16 @@
     <EditText
         android:id="@+id/destination"
         android:layout_width="317dp"
-        android:layout_height="wrap_content"
+        android:layout_height="36dip"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:hint=""
         android:inputType="text"
+        android:background="@drawable/bg_edittext"
+        android:drawableLeft="@drawable/search_ali"
+        android:drawablePadding="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/bmapView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.509"
@@ -57,7 +58,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:elevation="8dp"
+        android:elevation="18dp"
         android:src="@drawable/t4"
         app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,13 +66,12 @@
         app:layout_constraintHorizontal_bias="0.975"
         app:layout_constraintStart_toStartOf="@+id/bmapView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.757" />
+        app:layout_constraintVertical_bias="0.645" />
 
     <com.baidu.mapapi.map.MapView
         android:id="@+id/bmapView"
         android:layout_width="389dp"
         android:layout_height="575dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -79,7 +79,7 @@
         app:layout_constraintHorizontal_bias="0.769"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.75" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/publicTraffic"
@@ -89,7 +89,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:elevation="8dp"
+        android:elevation="18dp"
         android:src="@drawable/commute_white"
         app:borderWidth="0dp"
         app:layout_constraintBottom_toTopOf="@+id/fab"
@@ -107,7 +107,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:elevation="8dp"
+        android:elevation="18dp"
         android:src="@drawable/visibility_off_white"
         app:borderWidth="0dp"
         app:layout_constraintBottom_toTopOf="@+id/fab"
@@ -115,7 +115,7 @@
         app:layout_constraintHorizontal_bias="0.951"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.632" />
+        app:layout_constraintVertical_bias="0.675" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/weatherButton"
@@ -125,7 +125,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:elevation="8dp"
+        android:elevation="18dp"
         android:src="@drawable/wb_sunny_white"
         app:borderWidth="0dp"
         app:layout_constraintBottom_toTopOf="@+id/fab"
@@ -133,104 +133,26 @@
         app:layout_constraintHorizontal_bias="0.951"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/trafficCondition"
-        app:layout_constraintVertical_bias="0.293" />
+        app:layout_constraintVertical_bias="0.545" />
 
     <EditText
         android:id="@+id/weatherView"
-        android:layout_width="317dp"
-        android:layout_height="wrap_content"
+        android:layout_width="130dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:drawableLeft="@drawable/cloudy"
+        android:drawablePadding="10dp"
+        android:elevation="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintHorizontal_bias="0.965"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/departure"
-        app:layout_constraintVertical_bias="0.979" />
-
-    <!--<ListView-->
-    <!--android:id="@+id/menu"-->
-    <!--android:layout_width="60dp"-->
-    <!--android:layout_height="150dp"-->
-    <!--android:layout_marginBottom="132dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--app:layout_constraintBottom_toTopOf="@+id/fab"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.951"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent"-->
-    <!--app:layout_constraintVertical_bias="1.0">-->
-    <!--</ListView>-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv1"-->
-    <!--android:layout_width="41dp"-->
-    <!--android:layout_height="41dp"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="@string/roadCondition"-->
-    <!--android:gravity="center"-->
-    <!--android:textSize="41sp"-->
-    <!--android:background="@drawable/textview_border"-->
-    <!--app:layout_constraintBottom_toBottomOf="@+id/bmapView"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.965"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="@+id/destination"-->
-    <!--app:layout_constraintVertical_bias="0.227" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv2"-->
-    <!--android:layout_width="41dp"-->
-    <!--android:layout_height="41dp"-->
-    <!--android:layout_marginBottom="56dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="@string/publicTraffic"-->
-    <!--android:gravity="center"-->
-    <!--android:textSize="41sp"-->
-    <!--app:layout_constraintBottom_toTopOf="@+id/fab"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.954"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/tv1"-->
-    <!--app:layout_constraintVertical_bias="0.685" />-->
+        app:layout_constraintVertical_bias="0.723" />
 
 
-    <!--<LinearLayout-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="16dp"-->
-    <!--android:orientation="vertical"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.926"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent">-->
-
-    <!--<ImageView-->
-    <!--android:id="@+id/bus"-->
-    <!--android:layout_width="30dp"-->
-    <!--android:layout_height="30dp"-->
-    <!--android:layout_gravity="center_horizontal"-->
-    <!--android:src="@drawable/bus" />-->
-
-    <!--<ImageView-->
-    <!--android:id="@+id/ybr"-->
-    <!--android:layout_width="30dp"-->
-    <!--android:layout_height="30dp"-->
-    <!--android:layout_gravity="center_horizontal"-->
-    <!--android:src="@drawable/ybr" />-->
-    <!--</LinearLayout>-->
 </android.support.constraint.ConstraintLayout>
 

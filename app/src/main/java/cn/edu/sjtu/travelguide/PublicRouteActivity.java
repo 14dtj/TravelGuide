@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,6 +79,7 @@ public class PublicRouteActivity extends QMUIFragmentActivity implements OnGetPo
                 mSearch.searchInCity((new PoiCitySearchOption())
                         .city("上海")
                         .keyword(s));
+                hintKeyBoard();
                 return true;
             }
 
@@ -165,12 +167,27 @@ public class PublicRouteActivity extends QMUIFragmentActivity implements OnGetPo
 
     }
 
+    public void hintKeyBoard(){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(imm.isActive() && getCurrentFocus()!=null){
+            if(getCurrentFocus().getWindowToken()!=null){
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+    }
+
     /*
    当点击默认的返回按钮时的操作
     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
         if(keyCode == KeyEvent.KEYCODE_BACK){
+            finish();
             return true;
         }else{
             return super.onKeyDown(keyCode, event);

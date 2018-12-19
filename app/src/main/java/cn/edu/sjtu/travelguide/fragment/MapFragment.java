@@ -2,6 +2,7 @@ package cn.edu.sjtu.travelguide.fragment;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,9 +10,14 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.SpannedString;
+import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
@@ -24,6 +30,7 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
@@ -35,6 +42,7 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import butterknife.BindView;
@@ -74,23 +82,11 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     @BindView(R.id.weatherView)
     EditText weatherView;
 
-//    @BindView(R.id.tv1)
-//    TextView tv1;
-//    @BindView(R.id.tv2)
-//    TextView tv2;
-
-//    @BindView(R.id.menu)
-//    ListView listview;
-//    private ArrayList<Drawable> mList;
-
     private ConstraintLayout layout;
 
     LocationClient mLocClient;
     public MyLocationListener myListener = new MyLocationListener();
     private LocationMode mCurrentMode;
-    //BitmapDescriptor mCurrentMarker;
-//    private static final int accuracyCircleFillColor = 0xAAFFFF88;
-//    private static final int accuracyCircleStrokeColor = 0xAA00FF00;
     private SensorManager mSensorManager;
     private Double lastX = 0.0;
     private int mCurrentDirection = 0;
@@ -110,59 +106,27 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
     String pm = null;
     String quality = null;
     String temperature = null;
+    String sun = null;
 
     @Override
     protected View onCreateView() {
         layout = (ConstraintLayout) LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map, null);
         ButterKnife.bind(this, layout);
 
-        departure.setBackgroundColor(Color.WHITE);
         departure.setVisibility(View.INVISIBLE);
         destination.bringToFront();
-        destination.setBackgroundColor(Color.WHITE);
+        Drawable drawableLeft = getResources().getDrawable(
+                R.drawable.search_ali);
+        drawableLeft.setBounds(10, 0, 60, 50);
+        destination.setCompoundDrawables(drawableLeft, null, null, null);
+        departure.setCompoundDrawables(drawableLeft, null, null, null);
+//        destination.setCompoundDrawablesWithIntrinsicBounds(drawableLeft,
+//                null, null, null);
+//        destination.setCompoundDrawablePadding(4);
 
         weatherView.setVisibility(View.INVISIBLE);
         weatherView.setBackgroundColor(Color.WHITE);
         weatherView.bringToFront();
-//        Typeface font = Typeface.createFromAsset(getActivity().getAssets(),"fonts/fa-solid-900.ttf");
-//        tv1.setTypeface(font);
-//        tv2.setTypeface(font);
-//        tv1.bringToFront();
-//        tv2.bringToFront();
-//        tv1.setBackgroundColor(Color.WHITE);
-//        tv2.setBackgroundColor(Color.WHITE);
-
-//        listview.bringToFront();
-//        List<ListItemView> lists = new ArrayList<>();
-//        lists.add(new ListItemView(R.drawable.bus));
-//        lists.add(new ListItemView(R.drawable.ybr));
-
-//
-//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//
-//            }
-//        });
-
-//        int[] images = new int[]{R.drawable.ybr, R.drawable.bus};
-//        String[] titles = new String[]{"1","2"};
-//        List<Map<String, Object>> listitems = new ArrayList<Map<String, Object>>();
-//        for(int i=0;i<images.length;i++){
-//            Map<String, Object> map = new HashMap<String, Object>();
-//            map.put("image", images[i]);
-//            map.put("title", titles[i]);
-//            listitems.add(map);
-//        }
-//
-//        SimpleAdapter adapter = new SimpleAdapter(getActivity(), listitems, R.layout.icon_items, new String[]{"title", "image"},
-//                new int[]{R.id.title, R.id.image});
-//        listview.setAdapter(adapter);
-//        Resources res = this.getResources();
-//        mList = new ArrayList<Drawable>();
-//        mList.add(res.getDrawable(R.drawable.ybr));
-//        mList.add(res.getDrawable(R.drawable.bus));
-
 
         publicTraffic.bringToFront();
         trafficButton.bringToFront();
@@ -249,8 +213,6 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         mCurrentMode = LocationMode.COMPASS;
         mBaiduMap = mMapView.getMap();
 
-
-
         // 初始化搜索模块，注册事件监听
         mSearch = GeoCoder.newInstance();
         mSearch.setOnGetGeoCodeResultListener(this);
@@ -265,6 +227,8 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         option.setScanSpan(1000);
         mLocClient.setLocOption(option);
         mLocClient.start();
+        mCurrentMode = LocationMode.NORMAL;
+        mBaiduMap.setMyLocationConfiguration(new MyLocationConfiguration(mCurrentMode, true, null));
         mLocClient.requestLocation();
         return layout;
     }
@@ -374,7 +338,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
         mBaiduMap.clear();
         mBaiduMap.addOverlay(new MarkerOptions()
                 .position(result.getLocation())
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding)));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.location)));
 
         mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(result.getLocation()));
         String strInfo = String.format("纬度：%f 经度：%f",
@@ -419,14 +383,49 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
             pm = data.get("pm25").toString();
             quality = data.get("quality").toString();
             temperature = data.get("wendu").toString();
+            JSONArray jsonArray = data.getJSONArray("forecast");
+            JSONObject jo = jsonArray.getJSONObject(0);
+            sun = jo.getString("type");
         } catch(Exception e){
             e.printStackTrace();
         }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                weatherView.setText("温度" + temperature);
-                //Toast.makeText(getActivity(), "yyyyyyyy"+ weather, Toast.LENGTH_LONG).show();
+                // 新建一个可以添加属性的文本对象
+                SpannableString ss = new SpannableString(temperature+"℃" + "  湿度" + humidity);
+                // 新建一个属性对象,设置文字的大小
+                AbsoluteSizeSpan ass = new AbsoluteSizeSpan(15,true);
+                // 附加属性到文本
+                ss.setSpan(ass, 0, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                // 设置hint
+                weatherView.setText(new SpannedString(ss)); // 一定要进行转换,否则属性会消失
+                //weatherView.setText(temperature+"℃" + " 湿度" + humidity);
+                if(sun.equals("阴")||sun.equals("多云")){
+                    Drawable drawableRight = getResources().getDrawable(
+                            R.drawable.cloudy);
+                    drawableRight.setBounds(10, 0, 60, 50);
+                    weatherView.setCompoundDrawables(drawableRight, null, null, null);
+                    //weatherView.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.cloudy), null, null);
+                }else if(sun.equals("晴")){
+                    Drawable drawableRight = getResources().getDrawable(
+                            R.drawable.sunny);
+                    drawableRight.setBounds(10, 0, 60, 50);
+                    weatherView.setCompoundDrawables(drawableRight, null, null, null);
+                    //weatherView.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.sunny), null, null);
+                }else if(sun.contains("雨")){
+                    Drawable drawableRight = getResources().getDrawable(
+                            R.drawable.rainy);
+                    drawableRight.setBounds(10, 0, 60, 50);
+                    weatherView.setCompoundDrawables(drawableRight, null, null, null);
+                    //weatherView.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.rainy), null, null);
+                }else{
+                    Drawable drawableRight = getResources().getDrawable(
+                            R.drawable.nighty);
+                    drawableRight.setBounds(10, 0, 60, 50);
+                    weatherView.setCompoundDrawables(drawableRight, null, null, null);
+                    //weatherView.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.nighty), null, null);
+                }
             }
         });
 
