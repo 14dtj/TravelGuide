@@ -37,7 +37,29 @@ public class StepActivity extends AppCompatActivity {
         list_animal = (ListView) findViewById(R.id.list_test);
         mData = new LinkedList<Step>();
         for(int i=0;i<routeDetail.size();i++){
-            mData.add(new Step(routeDetail.get(i), routeDetail.get(i), R.drawable.ic_arrow_upward_black_36dp));
+            String rd=routeDetail.get(i);
+            if(i==routeDetail.size()-1){
+                mData.add(new Step(rd,  R.drawable.zhongdian));
+                break;
+            }
+
+            if(rd.contains("左转")){
+                mData.add(new Step(rd,  R.drawable.turnleft));
+            }else if(rd.contains("右转")){
+                mData.add(new Step(rd,  R.drawable.turnright));
+            }else if(rd.contains("调头")){
+                mData.add(new Step(rd,  R.drawable.diaotou));
+            }else if(rd.contains("收费")){
+                mData.add(new Step(rd,  R.drawable.shoufei));
+            }else if(rd.contains("终点")){
+                mData.add(new Step(rd,  R.drawable.zhongdian));
+            }else if(rd.contains("步行")){
+                mData.add(new Step(rd,  R.drawable.buxing));
+            }else if(rd.contains("地铁")){
+                mData.add(new Step(rd,  R.drawable.ditie));
+            }else {
+                mData.add(new Step(rd, R.drawable.ic_arrow_upward_black_36dp));
+            }
         }
 
         mAdapter = new StepAdapter((LinkedList<Step>) mData, mContext);

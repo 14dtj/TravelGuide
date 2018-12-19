@@ -3,7 +3,7 @@
     <!--按钮点击state_pressed之后颜色-->
     <item android:state_activated="true">
         <shape>
-            <solid android:color="@color/app_color_blue_pressed" />
+            <solid android:color="@color/app_color_blue" />
             <corners android:radius="5dp" />
         </shape>
     </item>

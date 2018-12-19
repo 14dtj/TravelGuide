@@ -84,7 +84,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     int nowSearchType = -1; // 当前进行的检索，供判断浏览节点时结果使用。
 
     String startNodeStr = "上海交通大学（闵行校区）";
-    String endNodeStr = "上海南站地铁站";
+    String endNodeStr = "上海站";
 
     String fastOrShort = "fast";
     String howtogo = "drive";
@@ -98,6 +98,10 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         Intent intent = getIntent();
 //        startNodeStr=intent.getStringExtra("departureLocation");
 //        endNodeStr =intent.getStringExtra("destinationLocation");
+
+
+
+
         routeDetail=findViewById(R.id.routeDetail);
         routeDetail.bringToFront();
 
@@ -118,6 +122,10 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
         findViewById(R.id.fast).setActivated(true);
         routeText = findViewById(R.id.routeContent);
         final TextView tv_middle = (TextView) findViewById(R.id.tv_middle);
+
+        tv_middle.setText("终点："+endNodeStr+"\n起点："+startNodeStr);
+
+
         final SlidingMenuVertical slidingMenuVertical = ((SlidingMenuVertical) findViewById(R.id.slidingMenu));
         slidingMenuVertical.setDuration_max(300);
         slidingMenuVertical.setAmbit_scroll(100);

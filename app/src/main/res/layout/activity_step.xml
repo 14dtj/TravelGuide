@@ -33,7 +33,10 @@
         <cn.edu.sjtu.travelguide.util.MyListView
             android:id="@+id/list_test"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:divider="#CCCCCC"
+            android:dividerHeight="2px"
+            >
         </cn.edu.sjtu.travelguide.util.MyListView>
 
     </ScrollView>
