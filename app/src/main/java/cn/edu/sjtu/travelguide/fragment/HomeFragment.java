@@ -64,7 +64,7 @@ public class HomeFragment extends BaseFragment {
         QMUITabSegment.Tab lab = new QMUITabSegment.Tab(
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab),
                 ContextCompat.getDrawable(getContext(), R.mipmap.icon_tabbar_lab_selected),
-                "我的", false
+                "设置", false
         );
         if (MyApplication.getUser() != null && MyApplication.getUser().getRole() == 1) {
             QMUITabSegment.Tab util = new QMUITabSegment.Tab(
