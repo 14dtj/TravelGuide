@@ -149,6 +149,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SlideVerticalActivity.this, StepActivity.class);
+                intent.putExtra("routeDetail",getNodeTitles());
                         startActivity(intent);
             }
         };
