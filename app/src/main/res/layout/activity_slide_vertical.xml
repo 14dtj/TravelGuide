@@ -204,7 +204,7 @@
                         android:paddingLeft="10dp"
                         android:text="终点：上海交通大学（徐汇校区）\n起点：我的位置"
                         android:textColor="#454545"
-                        android:background="#e6e6e6"/>
+                        android:background="#FAFAFA"/>
 
                     <ScrollView
                         android:layout_width="match_parent"
@@ -213,12 +213,19 @@
                         android:overScrollMode="never"
                         android:scrollbars="vertical">
 
+
+
+
+
                         <TextView
                             android:id="@+id/routeContent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingLeft="10dp"
+                            android:paddingTop="10dp"
+                            android:layout_marginBottom="10dp"
                             android:text="45分钟\n23.6公里\n10个红绿灯\n打车约79元\n途经：沪金高速、沪闵高架路 收费约5元\n往左拐\n往右拐" />
+
                     </ScrollView>
                 </LinearLayout>
 
