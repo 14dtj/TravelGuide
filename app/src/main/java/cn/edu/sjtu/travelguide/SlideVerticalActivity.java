@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.ColorSpace;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
@@ -96,8 +97,8 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
         setTitle(titleLable);
         Intent intent = getIntent();
-//        startNodeStr=intent.getStringExtra("departureLocation");
-//        endNodeStr =intent.getStringExtra("destinationLocation");
+        startNodeStr=intent.getStringExtra("departureLocation");
+        endNodeStr =intent.getStringExtra("destinationLocation");
 
 
 
@@ -137,9 +138,12 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             @Override
             public void onSwitching(boolean isToOpen, int y_now, int y_opened, int y_closed) {
 
+//                tv_middle.setBackgroundColor(Color.argb((int) (1.0f * (y_opened - y_now) / (y_opened - y_closed) * 255),
+//                        Color.red(0xff3F51B5), Color.green(0xff3F51B5), Color.blue(0xff3F51B5)));
+               // tv_middle.setBackgroundColor(Color.argb((int) (1.0f * (y_opened - y_now) / (y_opened - y_closed) * 255),
+                   //     Color.red(237), Color.green(248), Color.blue(253)));
                 tv_middle.setBackgroundColor(Color.argb((int) (1.0f * (y_opened - y_now) / (y_opened - y_closed) * 255),
-                        Color.red(0xff3F51B5), Color.green(0xff3F51B5), Color.blue(0xff3F51B5)));
-
+                             Color.red(0x01A8E1), Color.green(0x01A8E1), Color.blue(0x01A8E1)));
                 tv_middle.setTextColor(Color.argb((int) (1.0f * (y_opened - y_now) / (y_opened - y_closed) * 255),
                         Color.red(0xffffffff), Color.green(0xffffffff), Color.blue(0xffffffff)));
             }
@@ -150,6 +154,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
                 if (opened) {
                     tv_middle.setBackgroundColor(0xffffffff);
                     tv_middle.setTextColor(0xff454545);
+
                 }
             }
         });
