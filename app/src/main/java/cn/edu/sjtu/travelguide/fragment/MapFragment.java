@@ -52,6 +52,7 @@ import cn.edu.sjtu.travelguide.R;
 import cn.edu.sjtu.travelguide.SearchActivity;
 import cn.edu.sjtu.travelguide.SlideVerticalActivity;
 import cn.edu.sjtu.travelguide.service.AsyncTask;
+import cn.edu.sjtu.travelguide.service.PoiService;
 import cn.edu.sjtu.travelguide.service.WeatherService;
 import okhttp3.ResponseBody;
 
@@ -263,7 +264,7 @@ public class MapFragment extends BaseFragment implements SensorEventListener, On
                     mSearch.geocode(new GeoCodeOption().city(city).address(bundle.getString("destination")));
 
                     //这里调用可能会出问题！！！！
-                    //PoiService.getInstance().addSearchRecord(bundle.getString("destination"));
+                    PoiService.getInstance().addSearchRecord(bundle.getString("destination"));
                 }
                 fab.show();
 

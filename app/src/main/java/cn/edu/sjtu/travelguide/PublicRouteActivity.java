@@ -126,8 +126,8 @@ public class PublicRouteActivity extends QMUIFragmentActivity implements OnGetPo
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new StationItemDecoration(getApplicationContext()));
 
-        Toast.makeText(this, "得到了"+result.getBusLineName(),
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "得到了"+result.getBusLineName(),
+//                Toast.LENGTH_SHORT).show();
     }
 
     @Override
