@@ -414,13 +414,13 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             if (result.getRouteLines().size() > 1) {
                 nowResultwalk = result;
 
-
-                route = nowResultwalk.getRouteLines().get(0);
+                int position=shortOrFastW(result.getRouteLines(),fastOrShort);
+                route = nowResultwalk.getRouteLines().get(position);
                 routeText.setText(setRouteInfo(route)+"\n\n\n");
                 WalkingRouteOverlay overlay = new SlideVerticalActivity.MyWalkingRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
-                overlay.setData(nowResultwalk.getRouteLines().get(0));
+                overlay.setData(nowResultwalk.getRouteLines().get(position));
                 overlay.addToMap();
                 overlay.zoomToSpan();
 
@@ -464,14 +464,14 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
             if (result.getRouteLines().size() > 1) {
                 nowResultransit = result;
+                int position=shortOrFastT(result.getRouteLines(),fastOrShort);
 
-
-                route = nowResultransit.getRouteLines().get(0);
+                route = nowResultransit.getRouteLines().get(position);
                 routeText.setText(setRouteInfo(route)+"票价：6元\n\n\n");
                 TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
-                overlay.setData(nowResultransit.getRouteLines().get(0));
+                overlay.setData(nowResultransit.getRouteLines().get(position));
                 overlay.addToMap();
                 overlay.zoomToSpan();
 
@@ -555,7 +555,48 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
         return result;
     }
-
+    public int shortOrFastT(List<TransitRouteLine> routeLine, String type){
+        int time = routeLine.get(0).getDuration();
+        float distance=routeLine.get(0).getDistance();
+        int  Fastposition=0;
+        int shortPosition=0;
+        for(int i=0;i<routeLine.size();i++){
+            if(routeLine.get(i).getDuration()<time){
+                time = routeLine.get(i).getDuration();
+                Fastposition=i;
+            }
+            if(routeLine.get(i).getDistance()<distance){
+                distance = routeLine.get(i).getDistance();
+                shortPosition=i;
+            }
+        }
+        if(type.equals("fast")){
+            return Fastposition;
+        }else{
+            return shortPosition;
+        }
+    }
+    public int shortOrFastW(List<WalkingRouteLine> routeLine, String type){
+        int time = routeLine.get(0).getDuration();
+        float distance=routeLine.get(0).getDistance();
+        int  Fastposition=0;
+        int shortPosition=0;
+        for(int i=0;i<routeLine.size();i++){
+            if(routeLine.get(i).getDuration()<time){
+                time = routeLine.get(i).getDuration();
+                Fastposition=i;
+            }
+            if(routeLine.get(i).getDistance()<distance){
+                distance = routeLine.get(i).getDistance();
+                shortPosition=i;
+            }
+        }
+        if(type.equals("fast")){
+            return Fastposition;
+        }else{
+            return shortPosition;
+        }
+    }
     public int shortOrFast(List<DrivingRouteLine> routeLine, String type){
         int time = routeLine.get(0).getDuration();
         float distance=routeLine.get(0).getDistance();
