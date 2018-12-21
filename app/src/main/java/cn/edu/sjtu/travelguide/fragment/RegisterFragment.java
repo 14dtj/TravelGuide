@@ -68,8 +68,6 @@ public class RegisterFragment extends QMUIFragment implements AsyncTask {
                     String emailStr = email.getText().toString();
                     int role = 0;
                     if (userRadio.isChecked()) {
-                        role = 0;
-                    } else if (logisticsRadio.isChecked()) {
                         role = 1;
                     }
                     User user = new User(usernameStr, emailStr, passwordStr, role);

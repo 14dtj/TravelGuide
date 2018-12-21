@@ -416,7 +416,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
 
                 route = nowResultwalk.getRouteLines().get(0);
-                routeText.setText(setRouteInfo(route)+"\n\n\n\n");
+                routeText.setText(setRouteInfo(route)+"\n\n\n");
                 WalkingRouteOverlay overlay = new SlideVerticalActivity.MyWalkingRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
@@ -428,6 +428,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             } else if (result.getRouteLines().size() == 1) {
                 // 直接显示
                 route = result.getRouteLines().get(0);
+                routeText.setText(setRouteInfo(route)+"\n\n\n");
                 WalkingRouteOverlay overlay = new SlideVerticalActivity.MyWalkingRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
@@ -466,7 +467,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
 
                 route = nowResultransit.getRouteLines().get(0);
-                routeText.setText(setRouteInfo(route)+"\n\n\n\n");
+                routeText.setText(setRouteInfo(route)+"\n\n\n");
                 TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
@@ -478,6 +479,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             } else if (result.getRouteLines().size() == 1) {
                 // 直接显示
                 route = result.getRouteLines().get(0);
+                routeText.setText(setRouteInfo(route)+"\n\n\n");
                 TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
@@ -609,6 +611,7 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
             } else if (result.getRouteLines().size() == 1) {
                 route = result.getRouteLines().get(0);
+                routeText.setText(setRouteInfo(route)+"打车约"+70+"元\n");
                 DrivingRouteOverlay overlay = new SlideVerticalActivity.MyDrivingRouteOverlay(mBaidumap);
                 routeOverlay = overlay;
                 mBaidumap.setOnMarkerClickListener(overlay);
