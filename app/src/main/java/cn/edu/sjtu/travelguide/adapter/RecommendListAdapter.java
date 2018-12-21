@@ -28,7 +28,7 @@ public class RecommendListAdapter extends BaseQuickAdapter<SearchRecord> {
         baseViewHolder.setText(R.id.recommend_detail_url, poiVO.getDetail_url());
         Glide.with(mContext)
                 .load(poiVO.getImg_url())
-                .error(android.R.color.black)
+                .error(R.drawable.default_recommend)
                 .crossFade()
                 .into((ImageView) baseViewHolder.getView(R.id.imageview));//设置封面图片
     }

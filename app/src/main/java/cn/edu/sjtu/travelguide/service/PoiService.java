@@ -95,7 +95,7 @@ public class PoiService {
                 }
                 if (result.error == SearchResult.ERRORNO.NO_ERROR) {
                     SearchRecord record = map.get(result.uid);
-                    //  Log.d(TAG, result.uid + ", " + result.detailUrl);
+                    //Log.d(TAG, result.uid + ", " + result.detailUrl);
                     if (record != null) {
                         record.setDetail_url(result.detailUrl);
                         records.add(record);
