@@ -31,6 +31,7 @@ import cn.edu.sjtu.travelguide.entity.SearchRecord;
 import cn.edu.sjtu.travelguide.entity.User;
 import cn.edu.sjtu.travelguide.entity.UserPoiList;
 import cn.edu.sjtu.travelguide.service.AsyncTask;
+import cn.edu.sjtu.travelguide.service.PoiService;
 import cn.edu.sjtu.travelguide.service.RMPService;
 import okhttp3.ResponseBody;
 
