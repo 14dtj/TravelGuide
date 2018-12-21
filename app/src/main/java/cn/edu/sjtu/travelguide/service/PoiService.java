@@ -30,8 +30,10 @@ public class PoiService {
     private Map<String, SearchRecord> map = new HashMap<>();
     private List<SearchRecord> records = new ArrayList<>();
     private static PoiService instance;
+    private NLPService nlpService;
 
     private PoiService() {
+        nlpService = NLPService.getInstance();
     }
 
     public static PoiService getInstance() {
@@ -66,7 +68,7 @@ public class PoiService {
                     long userId = user.getId();
                     if (pois != null) {
                         for (PoiInfo info : pois) {
-                            if (info.name.contains(keyword)) {
+                            if (nlpService.isSimilar(info.name, keyword)) {
                                 SearchRecord record = new SearchRecord();
                                 record.setKeyword(keyword);
                                 record.setSearch_time(searchTime);
