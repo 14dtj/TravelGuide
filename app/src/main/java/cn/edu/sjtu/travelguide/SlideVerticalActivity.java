@@ -85,7 +85,8 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     int nowSearchType = -1; // 当前进行的检索，供判断浏览节点时结果使用。
 
     String startNodeStr = "上海交通大学（闵行校区）";
-    String endNodeStr = "上海站";
+    String endNodeStr = "上海南站" ;
+
 
     String fastOrShort = "fast";
     String howtogo = "drive";
@@ -389,23 +390,24 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     @Override
     public void onGetWalkingRouteResult(WalkingRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            routeText.setText("抱歉，未找到结果,建议您选择其他出行方式"+"\n\n\n\n\n");
+            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果,建议您选择其他出行方式", Toast.LENGTH_SHORT).show();
         }
-        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
-            // result.getSuggestAddrInfo()
-            AlertDialog.Builder builder = new AlertDialog.Builder(SlideVerticalActivity.this);
-            builder.setTitle("提示");
-            builder.setMessage("检索地址有歧义，请重新设置。\n可通过getSuggestAddrInfo()接口获得建议查询信息");
-            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create().show();
-            return;
-        }
+//        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+//            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+//            // result.getSuggestAddrInfo()
+//            AlertDialog.Builder builder = new AlertDialog.Builder(SlideVerticalActivity.this);
+//            builder.setTitle("提示");
+//            builder.setMessage("检索地址有歧义，请重新设置。\n可通过getSuggestAddrInfo()接口获得建议查询信息");
+//            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.dismiss();
+//                }
+//            });
+//            builder.create().show();
+//            return;
+//        }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
             nodeIndex = -1;
             mBtnPre.setVisibility(View.VISIBLE);
@@ -449,13 +451,15 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     public void onGetTransitRouteResult(TransitRouteResult result) {
 
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            routeText.setText("抱歉，未找到结果,建议您选择其他出行方式"+"\n\n\n\n\n\n\n\n");
+
+            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果,建议您选择其他出行方式", Toast.LENGTH_SHORT).show();
         }
-        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
-            // result.getSuggestAddrInfo()
-            return;
-        }
+//        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+//            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+//            // result.getSuggestAddrInfo()
+//            return;
+//        }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
             nodeIndex = -1;
             mBtnPre.setVisibility(View.VISIBLE);
@@ -621,13 +625,15 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     @Override
     public void onGetDrivingRouteResult(DrivingRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+            routeText.setText("抱歉，未找到结果,建议您选择其他出行方式"+"\n\n\n\n\n");
+            Toast.makeText(SlideVerticalActivity.this, "抱歉，未找到结果,建议您选择其他出行方式", Toast.LENGTH_SHORT).show();
+
         }
-        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
-            // result.getSuggestAddrInfo()
-            return;
-        }
+//        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+//            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+//            // result.getSuggestAddrInfo()
+//            return;
+//        }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
             nodeIndex = -1;
             mBtnPre.setVisibility(View.VISIBLE);
