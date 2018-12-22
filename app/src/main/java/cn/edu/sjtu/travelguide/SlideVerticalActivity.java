@@ -85,11 +85,13 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     int nowSearchType = -1; // 当前进行的检索，供判断浏览节点时结果使用。
 
     String startNodeStr = "上海交通大学（闵行校区）";
-    String endNodeStr = "上海南站" ;
+    String endNodeStr = "上海站" ;
 
 
     String fastOrShort = "fast";
     String howtogo = "drive";
+
+    int price=5;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -242,6 +244,80 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
 
     }
 
+public void setPrice()
+{
+int num=0;
+    int size=route.getAllStep().size();
+    Object step = null;
+    for(int i=0;i<size;i++) {
+        step = route.getAllStep().get(i);
+          String de= ((TransitRouteLine.TransitStep) step).getInstructions();
+if(de.contains("地铁")){
+    //3站以内3元，10站以内5,6站以内4,20站以内6
+
+    if(de.contains("15站")){
+num=num+15;
+    }else if(de.contains("16站")){
+        num=num+16;
+    }else if(de.contains("17站")){
+        num=num+17;
+    }else if(de.contains("18站")){
+        num=num+18;
+    }else if(de.contains("19站")){
+        num=num+19;
+    }else if(de.contains("20站")){
+        num=num+20;
+    }else if(de.contains("21站")){
+        num=num+21;
+    }else if(de.contains("22站")){
+        num=num+22;
+    }else if(de.contains("14站")){
+        num=num+14;
+    }else if(de.contains("13站")){
+        num=num+13;
+    }else if(de.contains("12站")){
+        num=num+12;
+    }else if(de.contains("11站")){
+        num=num+11;
+    }else if(de.contains("10站")){
+        num=num+10;
+    }else if(de.contains("9站")){
+        num=num+9;
+    }else if(de.contains("8站")){
+        num=num+8;
+    }else if(de.contains("7站")){
+        num=num+7;
+    }else if(de.contains("6站")){
+        num=num+6;
+    }else if(de.contains("5站")){
+        num=num+5;
+    }else if(de.contains("4站")){
+        num=num+4;
+    }else if(de.contains("3站")){
+    num=num+3;
+}else if(de.contains("2站")){
+    num=num+2;
+}else if(de.contains("1站")){
+        num=num+1;
+    }
+}
+    }
+if(num<=10&&num>=6){
+    price=5;
+}else if(num<6&&num>=3){
+    price=4;
+}else if(num<3){
+    price=3;
+}else if(num<22&&num>10){
+    price=6;
+}else if(num>=22){
+    price=7;
+}
+
+
+
+
+}
 
     public ArrayList<String> getNodeTitles(){
         ArrayList<String> result=new ArrayList<String>();
@@ -471,7 +547,8 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
                 int position=shortOrFastT(result.getRouteLines(),fastOrShort);
 
                 route = nowResultransit.getRouteLines().get(position);
-                routeText.setText(setRouteInfo(route)+"票价：6元\n\n\n");
+                setPrice();
+                routeText.setText(setRouteInfo(route)+"票价："+price+"元\n\n\n");
                 TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
@@ -483,7 +560,8 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
             } else if (result.getRouteLines().size() == 1) {
                 // 直接显示
                 route = result.getRouteLines().get(0);
-                routeText.setText(setRouteInfo(route)+"票价：6元\n\n\n");
+                setPrice();
+                routeText.setText(setRouteInfo(route)+"票价："+price+"元\n\n\n");
                 TransitRouteOverlay overlay = new SlideVerticalActivity.MyTransitRouteOverlay(mBaidumap);
                 mBaidumap.setOnMarkerClickListener(overlay);
                 routeOverlay = overlay;
