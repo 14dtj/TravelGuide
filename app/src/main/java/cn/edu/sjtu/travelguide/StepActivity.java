@@ -57,6 +57,8 @@ public class StepActivity extends AppCompatActivity {
                 mData.add(new Step(rd,  R.drawable.buxing));
             }else if(rd.contains("地铁")){
                 mData.add(new Step(rd,  R.drawable.ditie));
+            }else if(rd.contains("乘坐")){
+                mData.add(new Step(rd,  R.drawable.ditie));
             }else {
                 mData.add(new Step(rd, R.drawable.ic_arrow_upward_black_36dp));
             }

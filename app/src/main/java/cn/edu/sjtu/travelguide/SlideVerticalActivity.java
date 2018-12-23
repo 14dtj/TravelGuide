@@ -85,9 +85,10 @@ public class SlideVerticalActivity extends Activity implements BaiduMap.OnMapCli
     int nowSearchType = -1; // 当前进行的检索，供判断浏览节点时结果使用。
 
     String startNodeStr = "上海交通大学（闵行校区）";
-    String endNodeStr = "上海站" ;
 
-
+    //String endNodeStr = "上海站" ;
+    //String endNodeStr = "吴泾宝龙广场 上海市 闵行区" ;
+    String endNodeStr = "上海碧江广场 上海市 闵行区" ;
     String fastOrShort = "fast";
     String howtogo = "drive";
 
@@ -306,8 +307,10 @@ if(num<=10&&num>=6){
     price=5;
 }else if(num<6&&num>=3){
     price=4;
-}else if(num<3){
+}else if(num<3&&num>1){
     price=3;
+}else if(num<=1){
+    price=2;
 }else if(num<22&&num>10){
     price=6;
 }else if(num>=22){
